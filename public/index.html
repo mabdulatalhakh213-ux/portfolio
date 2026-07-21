@@ -2239,12 +2239,7 @@
 </footer>
 
 <script>
-  // ── EMBER PARTICLE SYSTEM ────────────────────────────────────────────
-  const canvas = document.getElementById('emberCanvas');
-  const ctx = canvas.getContext('2d');
-  let W, H;
-  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-  resize(); window.addEventListener('resize', resize);
+  // ── GLOBAL MOTION FLAGS ──────────────────────────────────────────────
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isLowPowerDevice = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 4);
   const heavyMotionEnabled = !prefersReducedMotion && !isLowPowerDevice;
@@ -2254,7 +2249,12 @@
   const loaderPct = document.getElementById('loaderPct');
   const loaderTypewriter = document.getElementById('loaderTypewriter');
   const loaderProgressCircle = document.getElementById('loaderProgressCircle');
-  const markEldenLoaderDone = () => eldenLoader && eldenLoader.classList.add('done');
+  let eldenLoaderDismissed = false;
+  function markEldenLoaderDone(){
+    if(eldenLoaderDismissed) return;
+    eldenLoaderDismissed = true;
+    if(eldenLoader) eldenLoader.classList.add('done');
+  }
   const loaderMessages = [
     'Traversing the Lands Between...',
     'Summoning embers of creation...',
@@ -2263,75 +2263,93 @@
     'Lighting the Sites of Grace...',
     'Channeling the Elden Ring...',
   ];
-  if(eldenLoader && !prefersReducedMotion){
-    const startedAt = performance.now();
-    const minDuration = 2200;
-    const hardTimeout = setTimeout(markEldenLoaderDone, 3500);
-    let msgIdx = 0;
-    let typewriterTimeout = null;
-    function typeMessage(text, el, cb){
-      let i = 0;
-      el.innerHTML = '<span class="tw-cursor"></span>';
-      const type = () => {
-        if(i < text.length){
-          el.innerHTML = text.substring(0, i + 1) + '<span class="tw-cursor"></span>';
-          i++;
-          typewriterTimeout = setTimeout(type, 30 + Math.random() * 40);
-        } else if(cb){
-          setTimeout(cb, 600);
+  if(eldenLoader){
+    if(prefersReducedMotion){
+      markEldenLoaderDone();
+    } else {
+      const startedAt = performance.now();
+      const minDuration = 1800;
+      const allTimeouts = [];
+      function safeTimeout(fn, ms){
+        const id = setTimeout(fn, ms);
+        allTimeouts.push(id);
+        return id;
+      }
+      function clearAllTimeouts(){
+        allTimeouts.forEach(id => clearTimeout(id));
+        allTimeouts.length = 0;
+      }
+      safeTimeout(markEldenLoaderDone, 3000);
+      let msgIdx = 0;
+      function typeMessage(text, el, cb){
+        let i = 0;
+        el.innerHTML = '<span class="tw-cursor"></span>';
+        const type = () => {
+          if(eldenLoaderDismissed) return;
+          if(i < text.length){
+            el.innerHTML = text.substring(0, i + 1) + '<span class="tw-cursor"></span>';
+            i++;
+            safeTimeout(type, 25 + Math.random() * 35);
+          } else if(cb){
+            safeTimeout(cb, 500);
+          }
+        };
+        type();
+      }
+      function cycleMessages(){
+        if(eldenLoaderDismissed) return;
+        if(msgIdx < loaderMessages.length){
+          typeMessage(loaderMessages[msgIdx], loaderTypewriter, () => {
+            msgIdx++;
+            cycleMessages();
+          });
         }
-      };
-      type();
-    }
-    function cycleMessages(){
-      if(msgIdx < loaderMessages.length){
-        typeMessage(loaderMessages[msgIdx], loaderTypewriter, () => {
-          msgIdx++;
-          cycleMessages();
-        });
       }
-    }
-    cycleMessages();
-    const circumference = 2 * Math.PI * 70;
-    const tick = (now) => {
-      const elapsed = now - startedAt;
-      const pct = Math.min(100, Math.round((elapsed / minDuration) * 100));
-      if(loaderPct) loaderPct.textContent = pct + '%';
+      cycleMessages();
       if(loaderProgressCircle){
-        const offset = circumference - (pct / 100) * circumference;
-        loaderProgressCircle.style.strokeDashoffset = offset;
-      }
-      if(elapsed < minDuration){
+        const circumference = 2 * Math.PI * 70;
+        loaderProgressCircle.style.strokeDasharray = circumference;
+        loaderProgressCircle.style.strokeDashoffset = circumference;
+        const tick = (now) => {
+          if(eldenLoaderDismissed) return;
+          const elapsed = now - startedAt;
+          const pct = Math.min(100, Math.round((elapsed / minDuration) * 100));
+          if(loaderPct) loaderPct.textContent = pct + '%';
+          const offset = circumference - (pct / 100) * circumference;
+          loaderProgressCircle.style.strokeDashoffset = offset;
+          if(elapsed < minDuration){
+            requestAnimationFrame(tick);
+          } else {
+            markEldenLoaderDone();
+            clearAllTimeouts();
+          }
+        };
         requestAnimationFrame(tick);
       } else {
-        markEldenLoaderDone();
-        clearTimeout(hardTimeout);
-        if(typewriterTimeout) clearTimeout(typewriterTimeout);
+        safeTimeout(markEldenLoaderDone, minDuration);
       }
-    };
-    loaderProgressCircle.style.strokeDasharray = circumference;
-    loaderProgressCircle.style.strokeDashoffset = circumference;
-    requestAnimationFrame(tick);
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        markEldenLoaderDone();
-        clearTimeout(hardTimeout);
-        if(typewriterTimeout) clearTimeout(typewriterTimeout);
-      }, 80);
-    });
-  } else if(eldenLoader){
-    markEldenLoaderDone();
+      window.addEventListener('load', () => {
+        safeTimeout(() => {
+          markEldenLoaderDone();
+          clearAllTimeouts();
+        }, 100);
+      });
+      document.addEventListener('DOMContentLoaded', () => {
+        safeTimeout(() => {
+          markEldenLoaderDone();
+          clearAllTimeouts();
+        }, 200);
+      });
+    }
   }
 
   // ── SYSTEM 2: ENHANCED EMBER PARTICLE SYSTEM (Multi-color + Mouse + Glow) ──
+  try {
   const canvas = document.getElementById('emberCanvas');
   const ctx = canvas.getContext('2d');
   let W, H;
   function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
   resize(); window.addEventListener('resize', resize);
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isLowPowerDevice = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 4);
-  const heavyMotionEnabled = !prefersReducedMotion && !isLowPowerDevice;
 
   const embers = [];
   const EMBER_COUNT = heavyMotionEnabled ? 100 : 32;
@@ -2395,6 +2413,7 @@
     }
   }
   drawEmbers();
+  } catch(e) { console.warn('Ember system init failed:', e); }
 
   // ── HERO REVEAL ─────────────────────────────────────────────────────
   setTimeout(() => {
