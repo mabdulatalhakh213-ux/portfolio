@@ -356,6 +356,15 @@
   }
   .act-head p{ color:var(--parchment-dim); font-size:14.5px; max-width:480px; margin-top:16px; line-height:1.7; }
   .act-stat{ font-family:var(--font-mono); text-align:right; flex-shrink:0; }
+  .motion-meter{
+    margin-top:8px; width:150px; max-width:100%; height:4px; margin-left:auto;
+    border:1px solid var(--edge-dim); background:rgba(17,19,24,0.9); position:relative;
+  }
+  .motion-meter span{
+    position:absolute; inset:0 auto 0 0; width:0%;
+    background:linear-gradient(90deg, var(--gold), rgba(59,130,246,0.8));
+    transition:width 0.18s linear;
+  }
   .act-stat .n{ font-size:38px; font-weight:700; color:var(--gold); line-height:1; }
   .act-stat .l{ font-size:10.5px; color:var(--parchment-faint); text-transform:uppercase; letter-spacing:0.08em; margin-top:8px; }
 
@@ -673,13 +682,14 @@
   }
 
   /* ── Horizontal astral lab ─────────────────────────────────────────── */
-  .astral-lab{ overflow:hidden; }
+  .astral-lab{ overflow:hidden; --portal-speed:5s; --space-shift:0; }
   .astral-lab::before{
     content:''; position:absolute; inset:0; pointer-events:none; opacity:0;
-    background:radial-gradient(circle at 50% 35%, rgba(59,130,246,0.14), transparent 58%);
-    transition:opacity 0.6s ease;
+    background:radial-gradient(circle at 50% 35%, rgba(59,130,246,0.18), transparent 58%);
+    transform:scale(1);
+    transition:opacity 0.6s ease, transform 0.6s ease;
   }
-  .astral-lab.portal-active::before{ opacity:1; }
+  .astral-lab.portal-active::before{ opacity:calc(0.2 + (var(--space-shift) * 0.8)); transform:scale(calc(1 + (var(--space-shift) * 0.08))); }
   .h-scroll{
     display:grid; grid-auto-flow:column; grid-auto-columns:minmax(280px, 33%); gap:20px;
     overflow-x:auto; padding-bottom:10px; scroll-snap-type:x mandatory;
@@ -692,14 +702,15 @@
     background:linear-gradient(160deg, rgba(17,19,24,0.92), rgba(13,15,19,0.9));
     transform-style:preserve-3d; perspective:900px;
     transition:transform 0.45s cubic-bezier(.2,.7,.2,1), border-color 0.35s ease, box-shadow 0.35s ease;
+    will-change:transform;
   }
-  .h-card:hover, .h-card:focus-visible{ transform:translateY(-6px) rotateX(3deg); border-color:var(--gold-faint); box-shadow:0 28px 70px -35px rgba(0,0,0,0.95); }
+  .h-card:hover, .h-card:focus-visible{ transform:translateY(-6px) rotateX(calc(3deg + var(--tilt-x, 0deg))) rotateY(var(--tilt-y, 0deg)); border-color:var(--gold-faint); box-shadow:0 28px 70px -35px rgba(0,0,0,0.95); }
   .h-card h3{ font-family:var(--font-display); font-size:22px; margin:18px 0 10px; letter-spacing:0.02em; }
   .h-card p{ font-size:13.5px; color:var(--parchment-dim); line-height:1.7; }
 
   .portal-card .portal-ring{
     width:110px; height:110px; border-radius:50%; border:1px solid var(--gold-faint);
-    position:relative; margin-top:6px; animation:portalOrbit 5s linear infinite;
+    position:relative; margin-top:6px; animation:portalOrbit var(--portal-speed) linear infinite;
   }
   .portal-card .portal-ring::before, .portal-card .portal-ring::after{
     content:''; position:absolute; inset:10px; border:1px solid rgba(201,154,59,0.35); border-radius:50%;
@@ -716,6 +727,7 @@
     width:130px; height:130px; position:relative; transform-style:preserve-3d;
     transform:rotateX(-18deg) rotateY(18deg);
     transition:transform 0.2s linear;
+    will-change:transform;
   }
   .product-face{
     position:absolute; width:130px; height:130px; display:grid; place-items:center;
@@ -726,11 +738,12 @@
   .product-face.side{ transform:rotateY(90deg) translateZ(65px); }
   .product-face.top{ transform:rotateX(90deg) translateZ(65px); }
 
-  .mini-gallery{ display:flex; gap:10px; perspective:900px; margin-top:8px; }
+  .mini-gallery{ display:flex; gap:10px; perspective:900px; margin-top:8px; transform-style:preserve-3d; }
   .g-item{
     flex:1; min-height:115px; border:1px solid var(--edge-dim);
     background:linear-gradient(150deg, rgba(13,15,19,0.95), rgba(17,19,24,0.8));
     display:grid; place-items:end start; padding:10px; transform-style:preserve-3d;
+    transform:translateZ(var(--depth, 0px)) rotateY(var(--g-tilt, 0deg));
     transition:transform 0.35s ease, border-color 0.35s ease;
   }
   .g-item span{ font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em; color:var(--parchment-dim); }
@@ -743,6 +756,8 @@
   }
   .fourth-wall-card:hover .reveal-object,
   .fourth-wall-card:focus-visible .reveal-object{ opacity:1; transform:translateY(0) scale(1); }
+  .fourth-wall-eye.aware .eye-glow{ border-color:rgba(201,154,59,0.45); animation-duration:1.4s; }
+  .fourth-wall-eye.aware .pupil{ box-shadow:0 0 24px rgba(201,154,59,0.95); }
 
   @media(max-width:980px){
     .h-scroll{ grid-auto-columns:minmax(260px, 72%); }
@@ -751,6 +766,7 @@
     .fourth-wall-eye{ width:44px; height:44px; right:14px; bottom:12px; }
     .fourth-wall-eye .pupil{ width:10px; height:10px; }
     .h-scroll{ grid-auto-columns:minmax(240px, 88%); }
+    .motion-meter{ width:120px; }
   }
 
   /* ── scrollbar ────────────────────────────────────────────────────── */
@@ -1032,6 +1048,7 @@
       <div class="act-stat">
         <div class="n">4 Scenes</div>
         <div class="l">Scroll or swipe sideways</div>
+        <div class="motion-meter" aria-hidden="true"><span id="hScrollMeter"></span></div>
       </div>
     </div>
 
@@ -1351,9 +1368,11 @@
   // ── SMOOTH LOADER ────────────────────────────────────────────────────
   const smoothLoader = document.getElementById('smoothLoader');
   const loaderProgress = document.getElementById('loaderProgress');
+  const markLoaderDone = () => smoothLoader && smoothLoader.classList.add('done');
   if(smoothLoader && !prefersReducedMotion){
     const startedAt = performance.now();
     const minDuration = 900;
+    const hardTimeout = setTimeout(markLoaderDone, 2600);
     const tick = (now) => {
       const elapsed = now - startedAt;
       const pct = Math.min(100, Math.round((elapsed / minDuration) * 100));
@@ -1361,15 +1380,19 @@
       if(elapsed < minDuration){
         requestAnimationFrame(tick);
       }else{
-        smoothLoader.classList.add('done');
+        markLoaderDone();
+        clearTimeout(hardTimeout);
       }
     };
     requestAnimationFrame(tick);
     window.addEventListener('load', () => {
-      setTimeout(() => smoothLoader.classList.add('done'), 80);
+      setTimeout(() => {
+        markLoaderDone();
+        clearTimeout(hardTimeout);
+      }, 80);
     });
   }else if(smoothLoader){
-    smoothLoader.classList.add('done');
+    markLoaderDone();
   }
 
   const embers = [];
@@ -1612,14 +1635,34 @@
   // ── ASTRAL LAB: horizontal + portal + fourth wall + 3D interactions ─
   const astralSection = document.getElementById('astral');
   const hScroll = document.getElementById('hScroll');
+  const hScrollMeter = document.getElementById('hScrollMeter');
   const productScene = document.getElementById('productScene');
   const miniGallery = document.getElementById('miniGallery');
   const fourthWallEye = document.getElementById('fourthWallEye');
+  const hCards = hScroll ? Array.from(hScroll.querySelectorAll('.h-card')) : [];
+  const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+  const rafThrottle = (fn) => {
+    let raf = 0;
+    return (...args) => {
+      if(raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        fn(...args);
+      });
+    };
+  };
 
   if(astralSection){
+    const portalThresholds = Array.from({ length: 21 }, (_, i) => i / 20);
     const portalObs = new IntersectionObserver((entries) => {
-      entries.forEach(entry => astralSection.classList.toggle('portal-active', entry.isIntersecting));
-    }, { threshold: 0.35 });
+      entries.forEach((entry) => {
+        astralSection.classList.toggle('portal-active', entry.isIntersecting);
+        const ratio = clamp(entry.intersectionRatio || 0, 0, 1);
+        astralSection.style.setProperty('--space-shift', ratio.toFixed(2));
+        const speed = (5.8 - ratio * 2.8).toFixed(2);
+        astralSection.style.setProperty('--portal-speed', `${speed}s`);
+      });
+    }, { threshold: portalThresholds });
     portalObs.observe(astralSection);
   }
 
@@ -1630,29 +1673,79 @@
         e.preventDefault();
       }
     }, { passive: false });
+    const updateScrollMeter = rafThrottle(() => {
+      const maxScroll = Math.max(1, hScroll.scrollWidth - hScroll.clientWidth);
+      const progress = clamp(hScroll.scrollLeft / maxScroll, 0, 1);
+      if(hScrollMeter){ hScrollMeter.style.width = `${(progress * 100).toFixed(1)}%`; }
+    });
+    hScroll.addEventListener('scroll', updateScrollMeter, { passive: true });
+    window.addEventListener('resize', updateScrollMeter);
+    updateScrollMeter();
   }
 
   if(productScene && !prefersReducedMotion){
-    const animateProductScene = () => {
+    let targetRotateY = 18;
+    let targetRotateX = -18;
+    let currentRotateY = targetRotateY;
+    let currentRotateX = targetRotateX;
+    const animateProductScene = rafThrottle(() => {
       const rect = productScene.getBoundingClientRect();
       const vh = window.innerHeight || 1;
-      const progress = Math.max(0, Math.min(1, 1 - (rect.top / vh)));
-      const rotateY = 18 + progress * 140;
-      const rotateX = -18 + progress * 22;
-      productScene.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      const progress = clamp(1 - (rect.top / vh), 0, 1);
+      targetRotateY = 18 + progress * 140;
+      targetRotateX = -18 + progress * 22;
+    });
+    const productSpring = () => {
+      currentRotateY += (targetRotateY - currentRotateY) * 0.12;
+      currentRotateX += (targetRotateX - currentRotateX) * 0.12;
+      productScene.style.transform = `rotateX(${currentRotateX.toFixed(2)}deg) rotateY(${currentRotateY.toFixed(2)}deg)`;
+      requestAnimationFrame(productSpring);
     };
-    window.addEventListener('scroll', () => requestAnimationFrame(animateProductScene), { passive: true });
+    const productHover = (e) => {
+      const rect = productScene.getBoundingClientRect();
+      const px = ((e.clientX - rect.left) / rect.width) - 0.5;
+      const py = ((e.clientY - rect.top) / rect.height) - 0.5;
+      targetRotateY += px * 18;
+      targetRotateX += py * -10;
+    };
+    window.addEventListener('scroll', animateProductScene, { passive: true });
+    productScene.addEventListener('pointermove', productHover, { passive: true });
+    productScene.addEventListener('pointerleave', animateProductScene);
     animateProductScene();
+    requestAnimationFrame(productSpring);
   }
 
   if(miniGallery && !prefersReducedMotion){
+    const items = Array.from(miniGallery.querySelectorAll('.g-item'));
+    items.forEach((item, i) => item.style.setProperty('--depth', `${(i + 1) * 4}px`));
     miniGallery.addEventListener('mousemove', (e) => {
       const r = miniGallery.getBoundingClientRect();
       const px = ((e.clientX - r.left) / r.width - 0.5) * 12;
       miniGallery.style.transform = `rotateY(${px}deg)`;
+      items.forEach((item, i) => {
+        const tilt = px * (0.3 + i * 0.08);
+        item.style.setProperty('--g-tilt', `${tilt.toFixed(2)}deg`);
+      });
     });
     miniGallery.addEventListener('mouseleave', () => {
       miniGallery.style.transform = 'rotateY(0deg)';
+      items.forEach(item => item.style.setProperty('--g-tilt', '0deg'));
+    });
+  }
+
+  if(hCards.length && !prefersReducedMotion){
+    hCards.forEach((card) => {
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const px = ((e.clientX - r.left) / r.width - 0.5) * 2.2;
+        const py = ((e.clientY - r.top) / r.height - 0.5) * -2.2;
+        card.style.setProperty('--tilt-y', `${px.toFixed(2)}deg`);
+        card.style.setProperty('--tilt-x', `${py.toFixed(2)}deg`);
+      }, { passive: true });
+      card.addEventListener('pointerleave', () => {
+        card.style.setProperty('--tilt-y', '0deg');
+        card.style.setProperty('--tilt-x', '0deg');
+      });
     });
   }
 
@@ -1677,6 +1770,11 @@
       fourthWallEye.style.transform = `translate(${currentX - (window.innerWidth - 56)}px, ${currentY - (window.innerHeight - 56)}px)`;
       requestAnimationFrame(springStep);
     };
+    document.addEventListener('pointerover', (e) => {
+      const target = e.target instanceof Element ? e.target : null;
+      if(!target) return;
+      fourthWallEye.classList.toggle('aware', !!target.closest('a, button, .h-card, .grace-checkpoint, .btn-solid, .btn-line'));
+    }, { passive: true });
     requestAnimationFrame(springStep);
   }
 </script>
