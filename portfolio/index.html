@@ -42,7 +42,7 @@
   img{ max-width:100%; display:block; }
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
-    .smooth-loader{ display:none !important; }
+    .smooth-loader, .elden-ring-loader{ display:none !important; }
     .fourth-wall-eye{ display:none !important; }
     .h-scroll{ scroll-snap-type:none; }
   }
@@ -1220,33 +1220,413 @@
 
     .h-scroll{ grid-auto-columns:minmax(220px, 92%); }
     .h-card{ min-height:260px; padding:16px; }
+
+    .elden-ring-loader .rune-svg{ width:100px; height:100px; }
+    .elden-ring-loader .loader-typewriter{ font-size:11px; }
+    .forge-phases .forge-phase{ font-size:16px; }
+    .boss-health-bar{ height:12px; }
+    .light-ray{ width:80px; }
+    .fog-layer{ opacity:0.15; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     ELDEN RING ANIMATION SYSTEMS — 12 Advanced Motion Systems
+     ═══════════════════════════════════════════════════════════════════ */
+
+  /* ── SYSTEM 1: ENHANCED LOADER (Rune Circle + Progress + Typewriter) ── */
+  .elden-ring-loader{
+    position:fixed; inset:0; z-index:1200; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; gap:30px;
+    background:radial-gradient(circle at 50% 50%, rgba(17,19,24,0.97), rgba(7,8,10,0.99));
+    transition:opacity 0.6s ease, visibility 0.6s ease;
+  }
+  .elden-ring-loader.done{ opacity:0; visibility:hidden; pointer-events:none; }
+  .rune-svg{
+    width:140px; height:140px; animation:runeRotate 4s linear infinite;
+    filter:drop-shadow(0 0 20px rgba(201,154,59,0.4));
+  }
+  .rune-svg .rune-circle{ stroke:var(--gold); stroke-width:1; fill:none; }
+  .rune-svg .rune-glyph{ fill:var(--gold); font-family:var(--font-display); font-size:10px; }
+  @keyframes runeRotate{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+  .rune-svg .counter-rotate{ animation:runeRotate 4s linear infinite reverse; transform-origin:center; }
+  .loader-progress-ring{
+    position:absolute; width:160px; height:160px;
+  }
+  .loader-progress-ring circle{
+    fill:none; stroke:var(--gold); stroke-width:2;
+    stroke-dasharray:440; stroke-dashoffset:440;
+    stroke-linecap:round;
+    transition:stroke-dashoffset 0.3s ease;
+  }
+  .loader-typewriter{
+    font-family:var(--font-mono); font-size:13px; color:var(--parchment-dim);
+    letter-spacing:0.06em; min-height:20px; text-align:center;
+  }
+  .loader-typewriter .tw-cursor{
+    display:inline-block; width:2px; height:14px; background:var(--gold);
+    margin-left:4px; animation:blink 1s steps(1) infinite; vertical-align:middle;
+  }
+  .loader-pct{
+    font-family:var(--font-display); font-size:24px; color:var(--gold);
+    text-shadow:0 0 30px rgba(201,154,59,0.3);
+  }
+
+  /* ── SYSTEM 2: ENHANCED PARTICLE SYSTEM (Multi-color + Mouse + Glow) ── */
+  .particle-enhanced{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+  }
+
+  /* ── SYSTEM 3: ELDEN CARD REVEAL LAYERS ──────────────────────────────── */
+  .elden-card{
+    position:relative; overflow:hidden;
+    transition:all 0.5s cubic-bezier(.2,.7,.2,1);
+  }
+  .elden-card .elden-glow{
+    position:absolute; inset:0; opacity:0;
+    background:radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(201,154,59,0.15), transparent 60%);
+    transition:opacity 0.4s ease; pointer-events:none; z-index:1;
+  }
+  .elden-card:hover .elden-glow{ opacity:1; }
+  .elden-card .elden-border{
+    position:absolute; inset:0; border:1px solid transparent;
+    transition:border-color 0.4s ease; pointer-events:none; z-index:2;
+  }
+  .elden-card:hover .elden-border{ border-color:var(--gold-faint); }
+  .elden-card .elden-reveal-text{
+    opacity:0; transform:translateY(10px);
+    transition:opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s;
+  }
+  .elden-card:hover .elden-reveal-text{ opacity:1; transform:translateY(0); }
+
+  /* ── SYSTEM 4: PORTAL ANIMATION (Enhanced Rune Rings + Glow) ────────── */
+  .portal-enhanced{
+    position:relative; width:200px; height:200px; margin:0 auto;
+  }
+  .portal-enhanced .portal-rune-ring{
+    position:absolute; inset:0; border-radius:50%; border:1px solid var(--gold-faint);
+    animation:portalSpin var(--portal-speed, 6s) linear infinite;
+  }
+  .portal-enhanced .portal-rune-ring:nth-child(2){
+    inset:15px; border-color:rgba(59,130,246,0.3);
+    animation:portalSpin calc(var(--portal-speed, 6s) * 0.7) linear infinite reverse;
+  }
+  .portal-enhanced .portal-rune-ring:nth-child(3){
+    inset:30px; border-color:rgba(139,26,26,0.3);
+    animation:portalSpin calc(var(--portal-speed, 6s) * 1.3) linear infinite;
+  }
+  @keyframes portalSpin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+  .portal-enhanced .portal-glyph{
+    position:absolute; font-family:var(--font-display); color:var(--gold);
+    animation:portalGlyphFloat 3s ease-in-out infinite;
+  }
+  @keyframes portalGlyphFloat{
+    0%,100%{ opacity:0.3; transform:translateY(0); }
+    50%{ opacity:0.8; transform:translateY(-8px); }
+  }
+  .portal-enhanced .portal-core-glow{
+    position:absolute; left:50%; top:50%; width:50px; height:50px;
+    transform:translate(-50%,-50%); border-radius:50%;
+    background:radial-gradient(circle, rgba(201,154,59,0.8), rgba(59,130,246,0.2), transparent);
+    box-shadow:0 0 60px rgba(201,154,59,0.5), 0 0 120px rgba(201,154,59,0.2);
+    animation:portalCorePulse 2s ease-in-out infinite;
+  }
+  @keyframes portalCorePulse{
+    0%,100%{ transform:translate(-50%,-50%) scale(1); opacity:0.8; }
+    50%{ transform:translate(-50%,-50%) scale(1.2); opacity:1; }
+  }
+
+  /* ── SYSTEM 5: 3D PRODUCT ANIMATION (Forge Phases) ──────────────────── */
+  .forge-phases{
+    display:flex; align-items:center; gap:20px; justify-content:center;
+  }
+  .forge-phase{
+    font-family:var(--font-mono); font-size:18px; color:var(--parchment-faint);
+    transition:all 0.6s cubic-bezier(.2,.7,.2,1);
+    position:relative;
+  }
+  .forge-phase.active{ color:var(--gold); text-shadow:0 0 30px rgba(201,154,59,0.5); }
+  .forge-phase.active::after{
+    content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px;
+    background:var(--gold); animation:forgeGlow 1.5s ease-in-out infinite;
+  }
+  @keyframes forgeGlow{
+    0%,100%{ box-shadow:0 0 10px var(--gold); }
+    50%{ box-shadow:0 0 30px var(--gold), 0 0 60px var(--gold-dim); }
+  }
+  .forge-connector{
+    width:40px; height:1px; background:var(--edge-dim); position:relative;
+  }
+  .forge-connector.active{ background:var(--gold); }
+
+  /* ── SYSTEM 6: CANVAS STARFIELD WARP ────────────────────────────────── */
+  #starfieldCanvas{
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0;
+    transition:opacity 0.8s ease;
+  }
+  #starfieldCanvas.active{ opacity:1; }
+
+  /* ── SYSTEM 7: CSS 3D GALLERY (Orbital Motion) ──────────────────────── */
+  .gallery-orbital{
+    perspective:1200px; position:relative; min-height:200px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .gallery-orbital .orbital-ring{
+    width:280px; height:280px; position:relative;
+    transform-style:preserve-3d;
+    animation:orbitalSpin 12s linear infinite;
+  }
+  @keyframes orbitalSpin{
+    from{ transform:rotateY(0deg) rotateX(15deg); }
+    to{ transform:rotateY(360deg) rotateX(15deg); }
+  }
+  .gallery-orbital .orbital-item{
+    position:absolute; width:80px; height:80px; border:1px solid var(--gold-faint);
+    background:rgba(17,19,24,0.9); display:grid; place-items:center;
+    font-family:var(--font-mono); font-size:10px; color:var(--parchment-dim);
+    backface-visibility:hidden;
+    transition:border-color 0.3s, box-shadow 0.3s;
+  }
+  .gallery-orbital .orbital-item:hover{
+    border-color:var(--gold); box-shadow:0 0 30px rgba(201,154,59,0.3);
+  }
+  .gallery-orbital .orbital-item:nth-child(1){ transform:rotateY(0deg) translateZ(140px); }
+  .gallery-orbital .orbital-item:nth-child(2){ transform:rotateY(60deg) translateZ(140px); }
+  .gallery-orbital .orbital-item:nth-child(3){ transform:rotateY(120deg) translateZ(140px); }
+  .gallery-orbital .orbital-item:nth-child(4){ transform:rotateY(180deg) translateZ(140px); }
+  .gallery-orbital .orbital-item:nth-child(5){ transform:rotateY(240deg) translateZ(140px); }
+  .gallery-orbital .orbital-item:nth-child(6){ transform:rotateY(300deg) translateZ(140px); }
+
+  /* ── SYSTEM 8: BREAKING THE FOURTH WALL (Perspective Piercing) ──────── */
+  .fourth-wall-pierce{
+    position:relative; overflow:visible;
+  }
+  .fourth-wall-pierce .pierce-element{
+    position:absolute; z-index:10; pointer-events:none;
+    transition:transform 0.4s cubic-bezier(.2,.7,.2,1), opacity 0.4s ease;
+  }
+  .fourth-wall-pierce .pierce-rune{
+    font-family:var(--font-display); font-size:32px; color:var(--gold);
+    opacity:0.15; animation:pierceFloat 5s ease-in-out infinite;
+  }
+  @keyframes pierceFloat{
+    0%,100%{ transform:translateY(0) rotate(0deg); opacity:0.15; }
+    50%{ transform:translateY(-15px) rotate(5deg); opacity:0.35; }
+  }
+  .fourth-wall-pierce .pierce-glow{
+    width:60px; height:60px; border-radius:50%;
+    background:radial-gradient(circle, rgba(201,154,59,0.3), transparent);
+    animation:gracePulse 3s ease-in-out infinite;
+  }
+  .fourth-wall-pierce:hover .pierce-element{ opacity:0.6; }
+
+  /* ── SYSTEM 9: BOSS HEALTH BARS (Project Complexity) ────────────────── */
+  .boss-health-bar{
+    height:16px; background:var(--void-light); border:1px solid var(--edge);
+    position:relative; overflow:hidden; margin:8px 0;
+  }
+  .boss-health-bar .boss-hp-fill{
+    height:100%; width:0%; transition:width 1.5s cubic-bezier(.2,.8,.2,1);
+    position:relative;
+  }
+  .boss-health-bar .boss-hp-fill.hp-gold{
+    background:linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-dim));
+    box-shadow:inset 0 0 10px rgba(201,154,59,0.3);
+  }
+  .boss-health-bar .boss-hp-fill.hp-blood{
+    background:linear-gradient(90deg, var(--blood), var(--blood-bright), var(--blood));
+    box-shadow:inset 0 0 10px rgba(139,26,26,0.3);
+  }
+  .boss-health-bar .boss-hp-fill.hp-cyber{
+    background:linear-gradient(90deg, var(--cyber-dim), var(--cyber), var(--cyber-dim));
+    box-shadow:inset 0 0 10px rgba(59,130,246,0.3);
+  }
+  .boss-health-bar .boss-hp-segments{
+    position:absolute; inset:0; display:flex;
+  }
+  .boss-health-bar .boss-hp-segments span{
+    flex:1; border-right:1px solid rgba(7,8,10,0.5);
+  }
+  .boss-health-bar .boss-hp-segments span:last-child{ border-right:none; }
+  .boss-label{
+    display:flex; justify-content:space-between; font-family:var(--font-mono);
+    font-size:10px; color:var(--parchment-dim); margin-bottom:4px;
+    text-transform:uppercase; letter-spacing:0.08em;
+  }
+  .boss-label .boss-difficulty{ color:var(--gold); }
+
+  /* ── SYSTEM 10: LIGHT RAYS + FOG PARALLAX ───────────────────────────── */
+  .light-rays{
+    position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:1;
+  }
+  .light-ray{
+    position:absolute; width:120px; height:100%;
+    background:linear-gradient(180deg, rgba(201,154,59,0.08), transparent 70%);
+    transform-origin:top center; animation:lightRaySway 8s ease-in-out infinite;
+  }
+  @keyframes lightRaySway{
+    0%,100%{ transform:rotate(-5deg) scaleY(1); opacity:0.6; }
+    50%{ transform:rotate(5deg) scaleY(1.1); opacity:1; }
+  }
+  .light-ray:nth-child(1){ left:15%; animation-delay:0s; width:100px; }
+  .light-ray:nth-child(2){ left:45%; animation-delay:2s; width:140px; opacity:0.4; }
+  .light-ray:nth-child(3){ left:75%; animation-delay:4s; width:80px; opacity:0.3; }
+  .fog-layer{
+    position:absolute; bottom:0; left:0; right:0; height:200px; pointer-events:none;
+    background:linear-gradient(0deg, rgba(7,8,10,0.6), transparent);
+    animation:fogDrift 12s ease-in-out infinite;
+  }
+  @keyframes fogDrift{
+    0%,100%{ transform:translateX(0); opacity:0.4; }
+    50%{ transform:translateX(20px); opacity:0.7; }
+  }
+
+  /* ── SYSTEM 11: HORIZONTAL SCROLL REGION BACKGROUNDS ────────────────── */
+  .h-card[data-region="limgrave"]{
+    background:linear-gradient(160deg, rgba(17,19,24,0.92), rgba(30,40,20,0.85));
+  }
+  .h-card[data-region="limgrave"]::before{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(circle at 30% 70%, rgba(80,120,40,0.08), transparent 60%);
+  }
+  .h-card[data-region="liurnia"]{
+    background:linear-gradient(160deg, rgba(17,19,24,0.92), rgba(20,25,50,0.85));
+  }
+  .h-card[data-region="liurnia"]::before{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(circle at 70% 30%, rgba(59,130,246,0.1), transparent 60%);
+  }
+  .h-card[data-region="caelid"]{
+    background:linear-gradient(160deg, rgba(17,19,24,0.92), rgba(50,15,15,0.85));
+  }
+  .h-card[data-region="caelid"]::before{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(circle at 50% 50%, rgba(139,26,26,0.1), transparent 60%);
+  }
+  .h-card[data-region="altus"]{
+    background:linear-gradient(160deg, rgba(17,19,24,0.92), rgba(40,35,15,0.85));
+  }
+  .h-card[data-region="altus"]::before{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(circle at 50% 20%, rgba(201,154,59,0.1), transparent 60%);
+  }
+  .region-label{
+    font-family:var(--font-mono); font-size:9px; color:var(--parchment-faint);
+    text-transform:uppercase; letter-spacing:0.15em; margin-bottom:8px;
+    opacity:0.6;
+  }
+
+  /* ── SYSTEM 12: PHYSICS SPRING (Enhanced) ───────────────────────────── */
+  .physics-spring{
+    transition:transform 0.5s cubic-bezier(.175,.885,.32,1.275);
+  }
+  .physics-spring:active{
+    transform:scale(0.95);
+  }
+  .physics-spring.springing{
+    animation:physicsBounce 0.6s cubic-bezier(.175,.885,.32,1.275);
+  }
+  @keyframes physicsBounce{
+    0%{ transform:scale(1) translateY(0); }
+    20%{ transform:scale(1.08) translateY(-4px); }
+    40%{ transform:scale(0.97) translateY(2px); }
+    60%{ transform:scale(1.03) translateY(-1px); }
+    80%{ transform:scale(0.99) translateY(0); }
+    100%{ transform:scale(1) translateY(0); }
+  }
+
+  /* ── ELDEN RING NOTIFICATION ENHANCED ────────────────────────────────── */
+  .notif-elden{
+    position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:900;
+    padding:16px 40px; border:1px solid var(--gold-faint);
+    background:rgba(7,8,10,0.95); backdrop-filter:blur(20px);
+    opacity:0; pointer-events:none;
+    transition:opacity 0.5s ease, transform 0.5s ease;
+    text-align:center;
+  }
+  .notif-elden.show{
+    opacity:1; transform:translateX(-50%) translateY(0);
+  }
+  .notif-elden .notif-title{
+    font-family:var(--font-display); font-size:14px; color:var(--gold);
+    letter-spacing:0.15em; text-transform:uppercase;
+  }
+  .notif-elden .notif-desc{
+    font-family:var(--font-serif); font-size:12px; color:var(--parchment-dim);
+    margin-top:6px; font-style:italic;
+  }
+
+  /* ── GOLDEN RUNES (Achievement Badges) ──────────────────────────────── */
+  .golden-rune{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 14px; border:1px solid var(--gold-faint);
+    background:rgba(201,154,59,0.05);
+    font-family:var(--font-mono); font-size:10px; color:var(--gold);
+    letter-spacing:0.06em;
+    transition:all 0.3s ease;
+  }
+  .golden-rune:hover{
+    border-color:var(--gold); background:rgba(201,154,59,0.1);
+    box-shadow:0 0 20px rgba(201,154,59,0.15);
+  }
+  .golden-rune .rune-icon{ font-size:14px; }
+
+  /* ── GREAT RUNES (Milestone Markers) ────────────────────────────────── */
+  .great-rune{
+    display:flex; align-items:center; gap:16px; padding:20px 24px;
+    border:1px solid var(--edge-dim); background:var(--void-card);
+    position:relative; overflow:hidden;
+    transition:all 0.4s ease;
+  }
+  .great-rune::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 0% 50%, rgba(201,154,59,0.06), transparent 50%);
+    opacity:0; transition:opacity 0.4s ease;
+  }
+  .great-rune:hover::before{ opacity:1; }
+  .great-rune:hover{ border-color:var(--gold-faint); }
+  .great-rune .gr-icon{
+    font-size:28px; color:var(--gold); flex-shrink:0;
+  }
+  .great-rune .gr-content{ flex:1; }
+  .great-rune .gr-title{
+    font-family:var(--font-display); font-size:14px; font-weight:600;
+    letter-spacing:0.02em; margin-bottom:4px;
+  }
+  .great-rune .gr-desc{ font-size:12px; color:var(--parchment-dim); line-height:1.6; }
+  .great-rune .gr-status{
+    font-family:var(--font-mono); font-size:9px; color:var(--gold);
+    text-transform:uppercase; letter-spacing:0.1em; flex-shrink:0;
   }
 </style>
 </head>
 <body>
 
 <canvas id="emberCanvas"></canvas>
+<canvas id="starfieldCanvas"></canvas>
 <div class="grain-overlay"></div>
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="mouse-glow" id="mouseGlow"></div>
 <div class="space-transition" id="spaceTransition"><div class="warp-line"></div></div>
 
-<div class="smooth-loader" id="smoothLoader" aria-hidden="true">
-  <div class="loader-particles">
-    <span class="loader-particle" style="left:20%;animation-delay:0s"></span>
-    <span class="loader-particle" style="left:35%;animation-delay:0.4s"></span>
-    <span class="loader-particle" style="left:50%;animation-delay:0.2s"></span>
-    <span class="loader-particle" style="left:65%;animation-delay:0.6s"></span>
-    <span class="loader-particle" style="left:80%;animation-delay:0.8s"></span>
-    <span class="loader-rune" style="left:15%;top:30%;animation-delay:0.5s">⟡</span>
-    <span class="loader-rune" style="right:15%;top:60%;animation-delay:1.2s">⟡</span>
-    <span class="loader-rune" style="left:40%;bottom:20%;animation-delay:0.8s">⟡</span>
+<div class="elden-ring-loader" id="eldenLoader" aria-hidden="true">
+  <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+    <svg class="rune-svg" viewBox="0 0 200 200">
+      <circle class="rune-circle" cx="100" cy="100" r="90" stroke-dasharray="8 4"/>
+      <circle class="rune-circle" cx="100" cy="100" r="75" stroke-dasharray="3 6" style="opacity:0.4"/>
+      <g class="counter-rotate">
+        <text class="rune-glyph" x="100" y="20" text-anchor="middle">⟡</text>
+        <text class="rune-glyph" x="180" y="105" text-anchor="middle">⟡</text>
+        <text class="rune-glyph" x="100" y="190" text-anchor="middle">⟡</text>
+        <text class="rune-glyph" x="20" y="105" text-anchor="middle">⟡</text>
+      </g>
+      <text class="rune-glyph" x="100" y="60" text-anchor="middle" style="font-size:14px">⚙</text>
+    </svg>
+    <svg class="loader-progress-ring" viewBox="0 0 160 160">
+      <circle cx="80" cy="80" r="70" id="loaderProgressCircle"/>
+    </svg>
   </div>
-  <div class="loader-core">
-    <div class="loader-ring"></div>
-    <div class="loader-label">Summoning motion systems</div>
-    <div class="loader-progress" id="loaderProgress">0%</div>
-  </div>
+  <div class="loader-typewriter" id="loaderTypewriter"><span class="tw-cursor"></span></div>
+  <div class="loader-pct" id="loaderPct">0%</div>
 </div>
 
 <div class="fourth-wall-eye" id="fourthWallEye" aria-hidden="true">
@@ -1277,6 +1657,8 @@
 
 <section class="hero" id="top">
   <div class="hero-bg-runes"></div>
+  <div class="light-rays"><div class="light-ray"></div><div class="light-ray"></div><div class="light-ray"></div></div>
+  <div class="fog-layer"></div>
   <div class="wrap hero-grid" id="heroGrid">
     <div>
       <div class="kicker">Sharjah, UAE · The Tarnished Awakens</div>
@@ -1484,6 +1866,10 @@
             <div class="mock-role"><span>Security Analyst</span><span class="pct">84%</span></div>
             <div class="mock-role"><span>Data Engineer</span><span class="pct">77%</span></div>
           </div>
+          <div style="margin-top:18px;">
+            <div class="boss-label"><span>Boss Difficulty</span><span class="boss-difficulty">LEGENDARY</span></div>
+            <div class="boss-health-bar"><div class="boss-hp-fill hp-gold" data-width="92"></div><div class="boss-hp-segments"><span></span><span></span><span></span><span></span><span></span></div></div>
+          </div>
         </div>
       </div>
       <div class="build-features">
@@ -1524,24 +1910,46 @@
     </div>
 
     <div class="h-scroll reveal" id="hScroll" tabindex="0" aria-label="Horizontal animation gallery">
-      <article class="h-card portal-card" tabindex="0">
-        <div class="portal-ring"></div>
-        <div class="portal-core"></div>
+      <article class="h-card portal-card fourth-wall-pierce elden-card" data-region="limgrave" tabindex="0">
+        <div class="region-label">Limgrave — The Beginning</div>
+        <div class="elden-glow"></div><div class="elden-border"></div>
+        <div class="pierce-element pierce-rune" style="right:-10px;top:-10px;">⟡</div>
+        <div class="portal-enhanced" style="margin:12px auto;">
+          <div class="portal-rune-ring"></div>
+          <div class="portal-rune-ring"></div>
+          <div class="portal-rune-ring"></div>
+          <div class="portal-core-glow"></div>
+        </div>
         <h3>Portal Transition</h3>
         <p>The section activates a radial warp as it enters view to bridge chapters like a space gate.</p>
+        <div class="elden-reveal-text" style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--gold-faint);">⟡ Gateway to the Lands Between</div>
       </article>
 
-      <article class="h-card product-card" tabindex="0">
+      <article class="h-card product-card fourth-wall-pierce elden-card" data-region="liurnia" tabindex="0">
+        <div class="region-label">Liurnia — The Scholar</div>
+        <div class="elden-glow"></div><div class="elden-border"></div>
+        <div class="pierce-element pierce-glow" style="right:-20px;bottom:-20px;"></div>
         <div class="product-scene" id="productScene" aria-hidden="true">
           <div class="product-face front">CareerCompass</div>
           <div class="product-face side">RLS</div>
           <div class="product-face top">AI Match</div>
         </div>
+        <div class="forge-phases" style="margin-top:16px;">
+          <span class="forge-phase" data-phase="0">⚒</span>
+          <span class="forge-connector"></span>
+          <span class="forge-phase" data-phase="1">🔥</span>
+          <span class="forge-connector"></span>
+          <span class="forge-phase" data-phase="2">⚔</span>
+        </div>
         <h3>3D Product Scroll</h3>
-        <p>The product cube rotates with scroll and hovers with spring-like inertia.</p>
+        <p>The product cube rotates with scroll and hovers with spring-like inertia. Forge phases track progress.</p>
+        <div class="elden-reveal-text" style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--gold-faint);">⟡ Weapon Forging — Rusty → Legendary</div>
       </article>
 
-      <article class="h-card gallery-card" tabindex="0">
+      <article class="h-card gallery-card fourth-wall-pierce elden-card" data-region="caelid" tabindex="0">
+        <div class="region-label">Caelid — The Challenge</div>
+        <div class="elden-glow"></div><div class="elden-border"></div>
+        <div class="pierce-element pierce-rune" style="left:-5px;bottom:20px;">⟡</div>
         <div class="mini-gallery" id="miniGallery">
           <figure class="g-item" tabindex="0"><span>Probe</span></figure>
           <figure class="g-item" tabindex="0"><span>Build</span></figure>
@@ -1549,12 +1957,17 @@
         </div>
         <h3>3D Gallery</h3>
         <p>Layered cards use perspective, parallax, and object reveal on hover/focus.</p>
+        <div class="elden-reveal-text" style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--gold-faint);">⟡ Roundtable Hold — Orbital Display</div>
       </article>
 
-      <article class="h-card fourth-wall-card" tabindex="0">
+      <article class="h-card fourth-wall-card fourth-wall-pierce elden-card" data-region="altus" tabindex="0">
+        <div class="region-label">Altus Plateau — The Vision</div>
+        <div class="elden-glow"></div><div class="elden-border"></div>
+        <div class="pierce-element pierce-glow" style="left:50%;top:-30px;transform:translateX(-50%);"></div>
         <div class="reveal-object" aria-hidden="true">👁</div>
         <h3>Breaking the Fourth Wall</h3>
         <p>The sentinel eye tracks the cursor and acknowledges your presence near interaction zones.</p>
+        <div class="elden-reveal-text" style="margin-top:12px;font-family:var(--font-mono);font-size:10px;color:var(--gold-faint);">⟡ The Eye of Grace Sees All</div>
       </article>
     </div>
   </div>
@@ -1836,66 +2249,145 @@
   const isLowPowerDevice = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 4);
   const heavyMotionEnabled = !prefersReducedMotion && !isLowPowerDevice;
 
-  // ── SMOOTH LOADER ────────────────────────────────────────────────────
-  const smoothLoader = document.getElementById('smoothLoader');
-  const loaderProgress = document.getElementById('loaderProgress');
-  const markLoaderDone = () => smoothLoader && smoothLoader.classList.add('done');
-  if(smoothLoader && !prefersReducedMotion){
+  // ── SYSTEM 1: ELDEN RING LOADER (Rune Circle + Progress + Typewriter) ──
+  const eldenLoader = document.getElementById('eldenLoader');
+  const loaderPct = document.getElementById('loaderPct');
+  const loaderTypewriter = document.getElementById('loaderTypewriter');
+  const loaderProgressCircle = document.getElementById('loaderProgressCircle');
+  const markEldenLoaderDone = () => eldenLoader && eldenLoader.classList.add('done');
+  const loaderMessages = [
+    'Traversing the Lands Between...',
+    'Summoning embers of creation...',
+    'Forging the digital realm...',
+    'Awakening the Tarnished...',
+    'Lighting the Sites of Grace...',
+    'Channeling the Elden Ring...',
+  ];
+  if(eldenLoader && !prefersReducedMotion){
     const startedAt = performance.now();
-    const minDuration = 900;
-    const hardTimeout = setTimeout(markLoaderDone, 2600);
+    const minDuration = 2200;
+    const hardTimeout = setTimeout(markEldenLoaderDone, 3500);
+    let msgIdx = 0;
+    let typewriterTimeout = null;
+    function typeMessage(text, el, cb){
+      let i = 0;
+      el.innerHTML = '<span class="tw-cursor"></span>';
+      const type = () => {
+        if(i < text.length){
+          el.innerHTML = text.substring(0, i + 1) + '<span class="tw-cursor"></span>';
+          i++;
+          typewriterTimeout = setTimeout(type, 30 + Math.random() * 40);
+        } else if(cb){
+          setTimeout(cb, 600);
+        }
+      };
+      type();
+    }
+    function cycleMessages(){
+      if(msgIdx < loaderMessages.length){
+        typeMessage(loaderMessages[msgIdx], loaderTypewriter, () => {
+          msgIdx++;
+          cycleMessages();
+        });
+      }
+    }
+    cycleMessages();
+    const circumference = 2 * Math.PI * 70;
     const tick = (now) => {
       const elapsed = now - startedAt;
       const pct = Math.min(100, Math.round((elapsed / minDuration) * 100));
-      loaderProgress.textContent = `${pct}%`;
+      if(loaderPct) loaderPct.textContent = pct + '%';
+      if(loaderProgressCircle){
+        const offset = circumference - (pct / 100) * circumference;
+        loaderProgressCircle.style.strokeDashoffset = offset;
+      }
       if(elapsed < minDuration){
         requestAnimationFrame(tick);
-      }else{
-        markLoaderDone();
+      } else {
+        markEldenLoaderDone();
         clearTimeout(hardTimeout);
+        if(typewriterTimeout) clearTimeout(typewriterTimeout);
       }
     };
+    loaderProgressCircle.style.strokeDasharray = circumference;
+    loaderProgressCircle.style.strokeDashoffset = circumference;
     requestAnimationFrame(tick);
     window.addEventListener('load', () => {
       setTimeout(() => {
-        markLoaderDone();
+        markEldenLoaderDone();
         clearTimeout(hardTimeout);
+        if(typewriterTimeout) clearTimeout(typewriterTimeout);
       }, 80);
     });
-  }else if(smoothLoader){
-    markLoaderDone();
+  } else if(eldenLoader){
+    markEldenLoaderDone();
   }
 
+  // ── SYSTEM 2: ENHANCED EMBER PARTICLE SYSTEM (Multi-color + Mouse + Glow) ──
+  const canvas = document.getElementById('emberCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isLowPowerDevice = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 4);
+  const heavyMotionEnabled = !prefersReducedMotion && !isLowPowerDevice;
+
   const embers = [];
-  const EMBER_COUNT = heavyMotionEnabled ? 80 : 32;
+  const EMBER_COUNT = heavyMotionEnabled ? 100 : 32;
+  const emberColors = [
+    { r:232, g:146, b:58 },
+    { r:201, g:154, b:59 },
+    { r:139, g:26, b:26 },
+    { r:59, g:130, b:246 },
+  ];
+  let mouseX = W / 2, mouseY = H / 2;
+  document.addEventListener('mousemove', (e) => { mouseX = e.clientX; mouseY = e.clientY; }, { passive: true });
+
   for(let i = 0; i < EMBER_COUNT; i++){
+    const color = emberColors[Math.floor(Math.random() * emberColors.length)];
     embers.push({
       x: Math.random() * W,
       y: Math.random() * H,
-      size: 1.5 + Math.random() * 3,
-      speedY: -(0.3 + Math.random() * 0.8),
-      speedX: (Math.random() - 0.5) * 0.3,
-      opacity: 0.2 + Math.random() * 0.6,
-      phase: Math.random() * Math.PI * 2
+      size: 1 + Math.random() * 3.5,
+      speedY: -(0.2 + Math.random() * 0.7),
+      speedX: (Math.random() - 0.5) * 0.25,
+      opacity: 0.15 + Math.random() * 0.5,
+      phase: Math.random() * Math.PI * 2,
+      color: color,
+      glowSize: 2 + Math.random() * 4,
     });
   }
 
   function drawEmbers(){
     ctx.clearRect(0, 0, W, H);
     embers.forEach(e => {
+      const dx = mouseX - e.x;
+      const dy = mouseY - e.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if(dist < 200){
+        const force = (200 - dist) / 200 * 0.15;
+        e.x -= (dx / dist) * force;
+        e.y -= (dy / dist) * force;
+      }
       e.x += e.speedX;
       e.y += e.speedY;
       if(e.y < -10){ e.y = H + 10; e.x = Math.random() * W; }
       if(e.x < -10) e.x = W + 10;
       if(e.x > W + 10) e.x = -10;
-      const flicker = 0.6 + 0.4 * Math.sin(Date.now() / 800 + e.phase);
+      const flicker = 0.5 + 0.5 * Math.sin(Date.now() / 700 + e.phase);
+      const c = e.color;
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.glowSize, 0, Math.PI * 2);
+      const grad = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.glowSize * 2.5);
+      grad.addColorStop(0, `rgba(${c.r},${c.g},${c.b},${e.opacity * flicker})`);
+      grad.addColorStop(0.4, `rgba(${c.r},${c.g},${c.b},${e.opacity * flicker * 0.3})`);
+      grad.addColorStop(1, `rgba(${c.r},${c.g},${c.b},0)`);
+      ctx.fillStyle = grad;
+      ctx.fill();
       ctx.beginPath();
       ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
-      const grad = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.size * 2);
-      grad.addColorStop(0, `rgba(232,146,58,${e.opacity * flicker})`);
-      grad.addColorStop(0.5, `rgba(201,154,59,${e.opacity * flicker * 0.4})`);
-      grad.addColorStop(1, 'rgba(201,154,59,0)');
-      ctx.fillStyle = grad;
+      ctx.fillStyle = `rgba(${c.r},${c.g},${c.b},${e.opacity * flicker * 0.8})`;
       ctx.fill();
     });
     if(!prefersReducedMotion){
@@ -2454,5 +2946,154 @@
       this.style.transform = 'translateX(0)';
     });
   });
+
+  // ══════════════════════════════════════════════════════════════════════
+  // ELDEN RING ANIMATION SYSTEMS — 6 through 12
+  // ══════════════════════════════════════════════════════════════════════
+
+  // ── SYSTEM 6: CANVAS STARFIELD WARP ──────────────────────────────────
+  const starfieldCanvas = document.getElementById('starfieldCanvas');
+  const sctx = starfieldCanvas ? starfieldCanvas.getContext('2d') : null;
+  let sW, sH;
+  const stars = [];
+  const STAR_COUNT = heavyMotionEnabled ? 200 : 60;
+  if(starfieldCanvas && sctx){
+    function resizeStarfield(){ sW = starfieldCanvas.width = window.innerWidth; sH = starfieldCanvas.height = window.innerHeight; }
+    resizeStarfield(); window.addEventListener('resize', resizeStarfield);
+    for(let i = 0; i < STAR_COUNT; i++){
+      stars.push({
+        x: (Math.random() - 0.5) * sW * 2,
+        y: (Math.random() - 0.5) * sH * 2,
+        z: Math.random() * sW,
+        pz: 0,
+        color: Math.random() > 0.85 ? '#c99a3b' : (Math.random() > 0.7 ? '#3b82f6' : '#d4c9a8'),
+      });
+    }
+    let starfieldActive = false;
+    let starfieldSpeed = 0;
+    function drawStarfield(){
+      sctx.fillStyle = 'rgba(7,8,10,0.15)';
+      sctx.fillRect(0, 0, sW, sH);
+      const cx = sW / 2, cy = sH / 2;
+      stars.forEach(s => {
+        s.pz = s.z;
+        s.z -= starfieldSpeed;
+        if(s.z <= 0){ s.z = sW; s.x = (Math.random() - 0.5) * sW * 2; s.y = (Math.random() - 0.5) * sH * 2; s.pz = s.z; }
+        const sx = (s.x / s.z) * sW / 2 + cx;
+        const sy = (s.y / s.z) * sH / 2 + cy;
+        const px = (s.x / s.pz) * sW / 2 + cx;
+        const py = (s.y / s.pz) * sH / 2 + cy;
+        const size = Math.max(0.5, (1 - s.z / sW) * 3);
+        sctx.beginPath();
+        sctx.moveTo(px, py);
+        sctx.lineTo(sx, sy);
+        sctx.strokeStyle = s.color;
+        sctx.lineWidth = size;
+        sctx.globalAlpha = Math.min(1, (1 - s.z / sW) * 1.5);
+        sctx.stroke();
+        sctx.globalAlpha = 1;
+      });
+      if(starfieldActive || starfieldSpeed > 0.1){
+        requestAnimationFrame(drawStarfield);
+      } else {
+        starfieldCanvas.classList.remove('active');
+      }
+    }
+    const spaceTransEl = document.getElementById('spaceTransition');
+    if(spaceTransEl){
+      const origAdd = spaceTransEl.classList.add.bind(spaceTransEl.classList);
+      spaceTransEl.classList.add = function(cls){
+        if(cls === 'active'){
+          starfieldActive = true;
+          starfieldSpeed = 12;
+          starfieldCanvas.classList.add('active');
+          drawStarfield();
+          const decay = () => {
+            starfieldSpeed *= 0.92;
+            if(starfieldSpeed < 0.1){ starfieldActive = false; starfieldSpeed = 0; return; }
+            requestAnimationFrame(decay);
+          };
+          setTimeout(decay, 400);
+        }
+        return origAdd(cls);
+      };
+    }
+  }
+
+  // ── SYSTEM 5: FORGE PHASES (3D Product Scroll Enhancement) ──────────
+  const forgePhases = document.querySelectorAll('.forge-phase');
+  const forgeConnectors = document.querySelectorAll('.forge-connector');
+  if(forgePhases.length && productScene){
+    let lastForgePhase = -1;
+    const updateForgePhases = rafThrottle(() => {
+      const rect = productScene.getBoundingClientRect();
+      const progress = clamp(1 - (rect.top / window.innerHeight), 0, 1);
+      let phase = 0;
+      if(progress > 0.6) phase = 2;
+      else if(progress > 0.3) phase = 1;
+      if(phase !== lastForgePhase){
+        lastForgePhase = phase;
+        forgePhases.forEach((fp, i) => {
+          fp.classList.toggle('active', i <= phase);
+        });
+        forgeConnectors.forEach((fc, i) => {
+          fc.classList.toggle('active', i < phase);
+        });
+      }
+    });
+    window.addEventListener('scroll', updateForgePhases, { passive: true });
+  }
+
+  // ── SYSTEM 9: BOSS HEALTH BARS (Animate on scroll) ──────────────────
+  const bossBars = document.querySelectorAll('.boss-hp-fill[data-width]');
+  if(bossBars.length){
+    const bossObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting){
+          const el = e.target;
+          const targetWidth = el.dataset.width;
+          setTimeout(() => { el.style.width = targetWidth + '%'; }, 200);
+          bossObs.unobserve(el);
+        }
+      });
+    }, { threshold: 0.3 });
+    bossBars.forEach(bar => bossObs.observe(bar));
+  }
+
+  // ── SYSTEM 3: ELDEN CARD GLOW FOLLOW ─────────────────────────────────
+  document.querySelectorAll('.elden-card').forEach(card => {
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      const mx = ((e.clientX - r.left) / r.width) * 100;
+      const my = ((e.clientY - r.top) / r.height) * 100;
+      card.style.setProperty('--mx', mx + '%');
+      card.style.setProperty('--my', my + '%');
+    }, { passive: true });
+  });
+
+  // ── SYSTEM 12: PHYSICS SPRING ON CLICK ───────────────────────────────
+  document.querySelectorAll('.physics-spring, .btn-solid, .btn-line, .nav-cta').forEach(el => {
+    el.addEventListener('click', function(){
+      this.classList.remove('springing');
+      void this.offsetWidth;
+      this.classList.add('springing');
+    });
+  });
+
+  // ── SYSTEM 8: FOURTH WALL PIERCE ELEMENTS (parallax on scroll) ──────
+  if(heavyMotionEnabled){
+    const pierceEls = document.querySelectorAll('.pierce-element');
+    if(pierceEls.length){
+      const updatePierce = rafThrottle(() => {
+        const scrollY = window.scrollY;
+        pierceEls.forEach((el, i) => {
+          const speed = 0.02 + (i % 3) * 0.015;
+          const offset = Math.sin(scrollY * speed + i) * 10;
+          el.style.transform = `translateY(${offset}px) rotate(${offset * 0.5}deg)`;
+        });
+      });
+      window.addEventListener('scroll', updatePierce, { passive: true });
+    }
+  }
 </script>
 </body></html>
