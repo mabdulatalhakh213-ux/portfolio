@@ -830,18 +830,20 @@
   }
   .text-reveal .text-reveal-inner{
     clip-path:inset(0 100% 0 0);
-    transition:clip-path 0.8s cubic-bezier(.2,.8,.2,1);
+    transition:clip-path 0.7s cubic-bezier(.2,.8,.2,1);
   }
   .text-reveal.in .text-reveal-inner{
     clip-path:inset(0 0% 0 0);
   }
   .text-reveal .text-reveal-bg{
-    position:absolute; inset:0; background:var(--gold);
+    position:absolute; inset:0; background:var(--gold-dim);
     transform:scaleX(0); transform-origin:left;
-    transition:transform 0.6s cubic-bezier(.2,.8,.2,1) 0.2s;
+    transition:transform 0.5s cubic-bezier(.2,.8,.2,1), opacity 0.3s ease 0.5s;
+    opacity:1;
   }
   .text-reveal.in .text-reveal-bg{
     transform:scaleX(1);
+    opacity:0;
   }
 
   /* ── PARALLAX SECTION BACKGROUNDS ──────────────────────────────────── */
