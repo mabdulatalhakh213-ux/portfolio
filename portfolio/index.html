@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muhammad Abdullah — The Tarnished That Probes, Builds & Verifies</title>
+<meta name="description" content="Muhammad Abdullah — Final-year CS student. Penetration tester, full-stack engineer, data analyst.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  :root{
+    --void:        #07080a;
+    --void-light:  #0d0f13;
+    --void-card:   #111318;
+    --edge:        #1e2028;
+    --edge-dim:    #2a2d38;
+    --gold:        #c99a3b;
+    --gold-dim:    #8a6a28;
+    --gold-faint:  #5a4520;
+    --parchment:   #d4c9a8;
+    --parchment-dim:#9a8f72;
+    --parchment-faint:#6b6350;
+    --blood:       #8b1a1a;
+    --blood-bright:#dc2626;
+    --cyber:       #3b82f6;
+    --cyber-dim:   #1e3a6a;
+    --ember:       #e8923a;
+    --font-display: 'Cinzel', serif;
+    --font-body:   'Inter', sans-serif;
+    --font-mono:   'JetBrains Mono', monospace;
+    --font-serif:  'Cormorant Garamond', serif;
+  }
+  body{
+    background:var(--void); color:var(--parchment); font-family:var(--font-body);
+    line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--gold); color:var(--void); }
+  a{ color:inherit; text-decoration:none; }
+  ul{ list-style:none; }
+  img{ max-width:100%; display:block; }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+  :focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+
+  /* ── canvas particle bg ───────────────────────────────────────────── */
+  #emberCanvas{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+  }
+  .grain-overlay{
+    position:fixed; inset:0; pointer-events:none; z-index:1; opacity:0.03; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap{ max-width:1240px; margin:0 auto; padding:0 36px; position:relative; z-index:2; }
+
+  /* ── "You Died" / notification overlay ────────────────────────────── */
+  .notification-overlay{
+    position:fixed; inset:0; z-index:900; display:flex; align-items:center; justify-content:center;
+    pointer-events:none; opacity:0; transition:opacity 1.2s ease;
+  }
+  .notification-overlay.show{ opacity:1; }
+  .notification-overlay .notif-text{
+    font-family:var(--font-display); font-size:clamp(2rem,5vw,4rem); font-weight:700;
+    color:var(--parchment); text-shadow:0 0 60px rgba(201,154,59,0.3);
+    letter-spacing:0.12em; text-align:center;
+  }
+  .notification-overlay .notif-sub{
+    font-family:var(--font-serif); font-size:clamp(1rem,2vw,1.4rem); font-style:italic;
+    color:var(--parchment-dim); margin-top:12px; letter-spacing:0.04em;
+  }
+
+  /* ── CHAPTER INTRO CARDS ──────────────────────────────────────────── */
+  .chapter-intro{
+    height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; position:relative;
+  }
+  .chapter-intro .ci-number{
+    font-family:var(--font-mono); font-size:12px; color:var(--gold);
+    letter-spacing:0.3em; margin-bottom:20px; opacity:0;
+    transform:translateY(10px); transition:opacity 1s ease, transform 1s ease;
+  }
+  .chapter-intro .ci-number.in{ opacity:1; transform:translateY(0); }
+  .chapter-intro .ci-line{
+    width:60px; height:1px; background:var(--gold-dim); margin-bottom:24px; opacity:0;
+    transition:opacity 0.8s ease 0.3s;
+  }
+  .chapter-intro .ci-line.in{ opacity:1; }
+  .chapter-intro h2{
+    font-family:var(--font-display); font-size:clamp(2.2rem,5vw,4.2rem); font-weight:700;
+    color:var(--parchment); letter-spacing:0.06em; opacity:0;
+    transform:translateY(20px); transition:opacity 1s ease 0.5s, transform 1s ease 0.5s;
+  }
+  .chapter-intro h2.in{ opacity:1; transform:translateY(0); }
+  .chapter-intro .ci-desc{
+    font-family:var(--font-serif); font-size:clamp(1rem,2vw,1.3rem); font-style:italic;
+    color:var(--parchment-dim); max-width:500px; margin-top:18px; opacity:0;
+    transform:translateY(14px); transition:opacity 1s ease 0.7s, transform 1s ease 0.7s;
+  }
+  .chapter-intro .ci-desc.in{ opacity:1; transform:translateY(0); }
+
+  /* ── GRACE CHECKPOINT (section divider) ───────────────────────────── */
+  .grace-checkpoint{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:100px 0; position:relative;
+  }
+  .grace-checkpoint .grace-circle{
+    width:60px; height:60px; border-radius:50%; border:1.5px solid var(--gold-dim);
+    display:flex; align-items:center; justify-content:center; position:relative;
+    transition:box-shadow 1s ease;
+  }
+  .grace-checkpoint .grace-circle::after{
+    content:''; position:absolute; width:90px; height:90px; border-radius:50%;
+    border:1px solid var(--gold-faint); opacity:0.3;
+    animation:gracePulse 3s ease-in-out infinite;
+  }
+  .grace-checkpoint .grace-circle .g-inner{
+    width:18px; height:18px; border-radius:50%; background:var(--gold);
+    box-shadow:0 0 20px var(--gold), 0 0 60px var(--gold-dim);
+    animation:gracePulse 2s ease-in-out infinite;
+  }
+  @keyframes gracePulse{
+    0%,100%{ opacity:0.4; transform:scale(1); }
+    50%{ opacity:1; transform:scale(1.1); }
+  }
+  .grace-checkpoint .grace-label{
+    font-family:var(--font-mono); font-size:10px; color:var(--gold-faint);
+    letter-spacing:0.25em; text-transform:uppercase; margin-top:24px;
+  }
+  .grace-checkpoint.in .grace-circle{ box-shadow:0 0 40px rgba(201,154,59,0.15); }
+
+  /* ── NAV (Site of Grace style) ────────────────────────────────────── */
+  header.nav{
+    position:fixed; top:0; left:0; right:0; z-index:100; padding:20px 0;
+    transition:padding 0.4s, background 0.4s, border-color 0.4s;
+    border-bottom:1px solid transparent;
+  }
+  header.nav.scrolled{
+    padding:12px 0; background:rgba(7,8,10,0.85); backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px); border-bottom-color:var(--edge);
+  }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; }
+  .nav-logo{
+    font-family:var(--font-display); font-size:13px; font-weight:600; letter-spacing:0.06em;
+    display:flex; align-items:center; gap:10px; color:var(--gold);
+  }
+  .nav-logo .grace-dot{
+    width:8px; height:8px; border-radius:50%; background:var(--gold);
+    box-shadow:0 0 8px var(--gold); flex-shrink:0;
+    animation:gracePulse 2s ease-in-out infinite;
+  }
+  .nav-links{ display:flex; gap:28px; font-family:var(--font-mono); font-size:11px; color:var(--parchment-dim); }
+  .nav-links a{ position:relative; transition:color 0.3s; padding:4px 0; letter-spacing:0.04em; }
+  .nav-links a:hover{ color:var(--gold); }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; bottom:-2px; width:0; height:1px;
+    background:var(--gold); transition:width 0.3s;
+  }
+  .nav-links a:hover::after{ width:100%; }
+  .nav-cta{
+    font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--void);
+    background:var(--gold); padding:10px 20px; display:inline-flex; align-items:center; gap:8px;
+    transition:all 0.3s; border:1px solid var(--gold); letter-spacing:0.04em;
+  }
+  .nav-cta:hover{ background:transparent; color:var(--gold); }
+  @media(max-width:900px){ .nav-links{ display:none; } }
+  @media(max-width:560px){
+    .nav-cta{ padding:8px 14px; font-size:10px; }
+    .nav-logo{ font-size:11px; }
+    .wrap{ padding:0 20px; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     HERO — The Awakening
+     ═══════════════════════════════════════════════════════════════════ */
+  .hero{
+    min-height:100vh; display:flex; align-items:center; position:relative;
+    padding:140px 0 80px; overflow:hidden;
+  }
+  .hero-bg-runes{
+    position:absolute; inset:0; pointer-events:none; opacity:0.12;
+    background-image:
+      radial-gradient(circle at 20% 50%, var(--gold-faint) 0px, transparent 1px),
+      radial-gradient(circle at 80% 30%, var(--gold-faint) 0px, transparent 1px),
+      radial-gradient(circle at 50% 80%, var(--gold-faint) 0px, transparent 1px);
+    background-size:80px 80px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 45%, black 15%, transparent 75%);
+  }
+
+  .hero-grid{ display:grid; grid-template-columns:0.95fr 1.05fr; gap:20px; align-items:center; width:100%; position:relative; z-index:2; }
+
+  .hero .kicker{
+    font-family:var(--font-mono); font-size:11px; color:var(--gold);
+    text-transform:uppercase; letter-spacing:0.18em;
+    display:flex; align-items:center; gap:12px; margin-bottom:28px;
+  }
+  .hero .kicker::before{ content:'⟡'; font-size:14px; color:var(--gold-dim); }
+  .hero .kicker::after{ content:''; flex:1; height:1px; background:var(--gold-faint); max-width:60px; }
+
+  .hero h1{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(2.4rem,4.4vw,3.8rem);
+    line-height:1.08; letter-spacing:0.02em; margin-bottom:24px;
+  }
+  .hero h1 .gold{ color:var(--gold); }
+  .hero h1 .blood{ color:var(--blood-bright); }
+  .hero h1 .em{
+    font-family:var(--font-serif); font-style:italic; font-weight:400;
+    color:var(--parchment-dim);
+  }
+
+  .hero-sub{
+    font-size:15px; color:var(--parchment-dim); max-width:500px; margin-bottom:38px; line-height:1.7;
+  }
+  .hero-sub strong{ color:var(--parchment); font-weight:600; }
+
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:48px; }
+  .btn-solid{
+    font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--void);
+    background:var(--gold); padding:14px 28px; display:inline-flex; align-items:center; gap:10px;
+    transition:all 0.3s; border:1px solid var(--gold); letter-spacing:0.03em;
+  }
+  .btn-solid:hover{ background:var(--parchment); border-color:var(--parchment); color:var(--void); transform:translateY(-2px); box-shadow:0 8px 30px rgba(201,154,59,0.15); }
+  .btn-line{
+    font-family:var(--font-mono); font-size:12px; font-weight:500; color:var(--parchment);
+    border:1px solid var(--edge-dim); padding:14px 28px; display:inline-flex; align-items:center;
+    gap:10px; transition:all 0.3s; letter-spacing:0.03em;
+  }
+  .btn-line:hover{ border-color:var(--gold); color:var(--gold); transform:translateY(-2px); box-shadow:0 8px 30px rgba(201,154,59,0.08); }
+
+  .hero-meta-row{ display:flex; gap:40px; font-family:var(--font-mono); }
+  .hero-meta-row .m-num{ font-size:20px; font-weight:600; color:var(--gold); }
+  .hero-meta-row .m-lbl{ font-size:10px; color:var(--parchment-faint); text-transform:uppercase; letter-spacing:0.08em; margin-top:4px; }
+
+  .hero-grid .kicker, .hero-grid h1, .hero-grid .hero-sub, .hero-grid .hero-ctas, .hero-grid .hero-meta-row{
+    opacity:0; transform:translateY(16px);
+    transition:opacity 0.8s ease, transform 0.8s ease;
+  }
+  .hero-grid .kicker{ transition-delay:0.05s; }
+  .hero-grid h1{ transition-delay:0.13s; }
+  .hero-grid .hero-sub{ transition-delay:0.21s; }
+  .hero-grid .hero-ctas{ transition-delay:0.29s; }
+  .hero-grid .hero-meta-row{ transition-delay:0.37s; }
+  .hero-grid.revealed .kicker, .hero-grid.revealed h1, .hero-grid.revealed .hero-sub, .hero-grid.revealed .hero-ctas, .hero-grid.revealed .hero-meta-row{
+    opacity:1; transform:translateY(0);
+  }
+
+  /* ── 3D RIG (the souls-like diorama) ──────────────────────────────── */
+  .rig-stage{
+    position:relative; height:560px; perspective:1800px;
+  }
+  .rig{
+    position:absolute; inset:0; transform-style:preserve-3d;
+    transform:rotateX(6deg) rotateY(-18deg);
+    transition:transform 0.12s ease-out;
+  }
+
+  .rig-glow{
+    position:absolute; width:300px; height:300px; left:50%; top:50%;
+    transform:translate3d(-50%,-50%,-300px);
+    background:radial-gradient(circle, rgba(201,154,59,0.08), transparent 70%);
+    border-radius:50%;
+    animation:gracePulse 3s ease-in-out infinite;
+  }
+
+  .rig-panel{
+    position:absolute; width:300px; height:160px;
+    border:1px solid var(--edge-dim);
+    background:linear-gradient(160deg, rgba(17,19,24,0.95), rgba(13,15,19,0.92));
+    backdrop-filter:blur(8px);
+    box-shadow:0 30px 60px -25px rgba(0,0,0,0.9), inset 0 1px 0 rgba(201,154,59,0.05);
+    padding:20px 22px;
+    display:flex; flex-direction:column; justify-content:space-between;
+    transition:border-color 0.4s;
+  }
+  .rig-panel:hover{ border-color:var(--gold-faint); }
+  .rig-panel .p-icon{ width:26px; height:26px; color:var(--gold); }
+  .rig-panel .p-label{
+    font-family:var(--font-mono); font-size:10px; color:var(--gold-faint);
+    text-transform:uppercase; letter-spacing:0.15em; margin-bottom:6px;
+  }
+  .rig-panel .p-title{
+    font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--parchment);
+    margin-bottom:6px; letter-spacing:0.02em;
+  }
+  .rig-panel .p-desc{
+    font-family:var(--font-mono); font-size:10px; color:var(--parchment-dim); line-height:1.6;
+  }
+
+  .rig-panel.probe{ transform:translate3d(-100px, -170px, 50px); }
+  .rig-panel.build{ transform:translate3d(70px, -20px, 130px); border-color:var(--gold-faint); }
+  .rig-panel.build:hover{ border-color:var(--gold); }
+  .rig-panel.verify{ transform:translate3d(-85px, 145px, -10px); }
+
+  .rig-portrait{
+    position:absolute; width:230px; height:auto; left:50%; top:54%;
+    transform:translate3d(-50%, -46%, 220px);
+    filter:drop-shadow(0 30px 60px rgba(0,0,0,0.7));
+    border:1px solid var(--edge);
+    opacity:0.9;
+  }
+
+  .rig-floor{
+    position:absolute; width:500px; height:500px; left:50%; top:54%;
+    transform:translate3d(-50%,-50%,-250px) rotateX(90deg);
+    background:radial-gradient(ellipse, rgba(201,154,59,0.08), transparent 70%);
+    border-radius:50%;
+  }
+
+  .rig-rune{
+    position:absolute; font-family:var(--font-display); font-size:42px; color:var(--gold);
+    opacity:0.06; pointer-events:none;
+  }
+  .rig-rune.r1{ transform:translate3d(-180px,-240px,10px); }
+  .rig-rune.r2{ transform:translate3d(160px,200px,5px); }
+  .rig-rune.r3{ transform:translate3d(-150px,220px,30px); }
+
+  @media(max-width:1080px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .rig-stage{ height:420px; order:-1; perspective:1200px; }
+    .rig-panel{ width:220px; height:140px; padding:16px 18px; }
+    .rig-portrait{ width:200px; }
+  }
+  @media(max-width:640px){
+    .rig-stage{ height:320px; perspective:900px; margin:0 0 16px; overflow:hidden; }
+    .rig{ transform:rotateX(5deg) rotateY(-6deg) scale(0.7) !important; }
+    .rig-panel{ width:180px; height:120px; padding:12px 14px; }
+    .rig-panel .p-title{ font-size:14px; }
+    .rig-panel .p-desc{ font-size:9px; }
+    .rig-panel .p-icon{ width:20px; height:20px; }
+    .rig-portrait{ width:150px; }
+    .rig-panel.probe{ transform:translate3d(-65px, -120px, 30px); }
+    .rig-panel.build{ transform:translate3d(55px, -5px, 100px); }
+    .rig-panel.verify{ transform:translate3d(-55px, 110px, -5px); }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     SHARED SECTION SHELL
+     ═══════════════════════════════════════════════════════════════════ */
+  section.act{ position:relative; padding:100px 0; border-top:1px solid var(--edge); }
+  .act-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:40px; margin-bottom:60px; flex-wrap:wrap; }
+  .act-head-left{ max-width:600px; }
+  .act-tag{
+    font-family:var(--font-mono); font-size:11px; color:var(--gold);
+    text-transform:uppercase; letter-spacing:0.18em;
+    display:flex; align-items:center; gap:12px; margin-bottom:18px;
+  }
+  .act-tag::before{ content:'⟡'; font-size:13px; }
+  .act-head h2{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(1.7rem,3.2vw,2.6rem);
+    letter-spacing:0.02em; line-height:1.15;
+  }
+  .act-head p{ color:var(--parchment-dim); font-size:14.5px; max-width:480px; margin-top:16px; line-height:1.7; }
+  .act-stat{ font-family:var(--font-mono); text-align:right; flex-shrink:0; }
+  .act-stat .n{ font-size:38px; font-weight:700; color:var(--gold); line-height:1; }
+  .act-stat .l{ font-size:10.5px; color:var(--parchment-faint); text-transform:uppercase; letter-spacing:0.08em; margin-top:8px; }
+
+  .reveal{ opacity:0; transform:translateY(30px); transition:opacity 0.9s cubic-bezier(.2,.7,.25,1), transform 0.9s cubic-bezier(.2,.7,.25,1); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ── SOULS-LIKE STAT BARS ─────────────────────────────────────────── */
+  .stat-bars-row{
+    display:flex; gap:24px; margin-bottom:40px; flex-wrap:wrap;
+  }
+  .stat-bar-wrap{ flex:1; min-width:160px; }
+  .stat-bar-label{
+    display:flex; justify-content:space-between; font-family:var(--font-mono);
+    font-size:10px; color:var(--parchment-dim); text-transform:uppercase;
+    letter-spacing:0.08em; margin-bottom:6px;
+  }
+  .stat-bar-track{
+    height:6px; background:var(--void-light); border:1px solid var(--edge);
+    border-radius:3px; overflow:hidden; position:relative;
+  }
+  .stat-bar-fill{
+    height:100%; border-radius:2px; width:0%;
+    transition:width 1.4s cubic-bezier(.2,.8,.2,1);
+  }
+  .stat-bar-fill.resolve{ background:linear-gradient(90deg, var(--gold-dim), var(--gold)); }
+  .stat-bar-fill.focus{ background:linear-gradient(90deg, var(--cyber-dim), var(--cyber)); }
+  .stat-bar-fill.logic{ background:linear-gradient(90deg, var(--blood), var(--blood-bright)); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     CHAPTER I — PROBE
+     ═══════════════════════════════════════════════════════════════════ */
+  .term-shell{
+    background:var(--void-card); border:1px solid var(--edge-dim);
+    overflow:hidden; box-shadow:0 40px 80px -35px rgba(0,0,0,0.8);
+  }
+  .term-bar{
+    display:flex; align-items:center; gap:10px; padding:12px 18px;
+    border-bottom:1px solid var(--edge); background:var(--void-light);
+  }
+  .term-bar .dots{ display:flex; gap:6px; }
+  .term-bar .dots span{ width:9px; height:9px; border-radius:50%; background:var(--edge-dim); }
+  .term-bar .title{ font-family:var(--font-mono); font-size:11px; color:var(--parchment-faint); margin-left:6px; }
+  .term-body{ padding:24px 26px 28px; font-family:var(--font-mono); font-size:13px; line-height:2; }
+  .term-line{ display:flex; gap:14px; opacity:0; transform:translateX(-8px); transition:opacity 0.5s ease, transform 0.5s ease; }
+  .term-line.in{ opacity:1; transform:translateX(0); }
+  .term-line .ln{ color:var(--parchment-faint); width:22px; flex-shrink:0; text-align:right; user-select:none; }
+  .term-line .cmd{ color:var(--parchment-dim); }
+  .term-line .cmd .path{ color:var(--gold); }
+  .term-line .out{ color:var(--parchment-faint); padding-left:36px; }
+  .term-line .out.warn{ color:var(--blood-bright); }
+  .term-line .out.ok{ color:var(--gold); }
+  .term-cursor{ display:inline-block; width:7px; height:14px; background:var(--gold); margin-left:6px; animation:blink 1s steps(1) infinite; vertical-align:middle; }
+  @keyframes blink{ 0%,50%{opacity:1;} 51%,100%{opacity:0;} }
+
+  .probe-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:28px; align-items:start; }
+  .probe-side{ display:flex; flex-direction:column; gap:14px; }
+  .probe-fact{
+    background:var(--void-light); border:1px solid var(--edge); padding:18px 20px;
+    position:relative;
+  }
+  .probe-fact::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+    background:var(--gold-faint); opacity:0.4;
+  }
+  .probe-fact .f-label{
+    font-family:var(--font-mono); font-size:10px; color:var(--gold);
+    text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px;
+  }
+  .probe-fact .f-val{
+    font-family:var(--font-display); font-size:16px; font-weight:600; margin-bottom:6px;
+    letter-spacing:0.02em;
+  }
+  .probe-fact .f-desc{ font-size:12.5px; color:var(--parchment-faint); line-height:1.6; }
+
+  @media(max-width:980px){ .probe-grid{ grid-template-columns:1fr; } .term-body{ font-size:12px; } }
+  @media(max-width:560px){
+    .term-body{ font-size:10px; padding:18px 14px 22px; }
+    .term-line{ flex-wrap:wrap; }
+    .term-line .out{ padding-left:36px; word-break:break-all; }
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     CHAPTER II — BUILD
+     ═══════════════════════════════════════════════════════════════════ */
+  .build-showcase{
+    display:grid; grid-template-columns:1fr; gap:0;
+    border:1px solid var(--edge-dim); overflow:hidden;
+    box-shadow:0 50px 100px -40px rgba(0,0,0,0.8);
+  }
+  .mock-browser-bar{
+    background:var(--void-light); padding:14px 20px; display:flex; align-items:center;
+    gap:16px; border-bottom:1px solid var(--edge);
+  }
+  .mock-browser-bar .dots{ display:flex; gap:6px; }
+  .mock-browser-bar .dots span{ width:9px; height:9px; border-radius:50%; background:var(--edge-dim); }
+  .mock-browser-bar .url{
+    font-family:var(--font-mono); font-size:11px; color:var(--parchment-faint);
+    background:var(--void); padding:6px 14px; flex-grow:1; max-width:340px;
+  }
+
+  .mock-app{ background:var(--void-card); padding:44px 40px; display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:center; }
+  .mock-copy .m-tag{
+    font-family:var(--font-mono); font-size:10px; color:var(--gold);
+    text-transform:uppercase; letter-spacing:0.12em; margin-bottom:14px;
+  }
+  .mock-copy h3{
+    font-family:var(--font-display); font-size:24px; font-weight:700; margin-bottom:14px;
+    line-height:1.2; letter-spacing:0.02em;
+  }
+  .mock-copy p{ color:var(--parchment-dim); font-size:14px; margin-bottom:22px; line-height:1.7; }
+  .mock-score-row{ display:flex; gap:12px; }
+  .mock-chip{
+    font-family:var(--font-mono); font-size:10px; color:var(--parchment-dim);
+    border:1px solid var(--edge-dim); padding:5px 12px;
+    letter-spacing:0.03em;
+  }
+
+  .mock-card{ background:var(--void-light); border:1px solid var(--edge); padding:22px; }
+  .mock-card-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+  .mock-card-row .label{ font-family:var(--font-mono); font-size:10px; color:var(--parchment-faint); letter-spacing:0.1em; }
+  .mock-match-score{ font-family:var(--font-display); font-size:36px; font-weight:700; color:var(--gold); }
+  .mock-bar-track{ height:6px; background:var(--void); overflow:hidden; margin-bottom:14px; border:1px solid var(--edge); }
+  .mock-bar-fill{ height:100%; background:var(--gold); width:0%; transition:width 1.4s cubic-bezier(.2,.8,.2,1); }
+  .mock-role-list{ display:flex; flex-direction:column; gap:10px; margin-top:18px; }
+  .mock-role{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; color:var(--parchment-dim); padding-bottom:10px; border-bottom:1px solid var(--edge); }
+  .mock-role .pct{ color:var(--parchment); font-weight:600; }
+
+  .build-features{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--edge); border-top:1px solid var(--edge); }
+  .build-feature{ background:var(--void-card); padding:24px 26px; }
+  .build-feature .bf-num{ font-family:var(--font-mono); font-size:10px; color:var(--gold); margin-bottom:10px; letter-spacing:0.08em; }
+  .build-feature h4{ font-family:var(--font-display); font-size:15px; font-weight:600; margin-bottom:8px; letter-spacing:0.02em; }
+  .build-feature p{ font-size:12px; color:var(--parchment-faint); line-height:1.6; }
+
+  @media(max-width:860px){ .mock-app{ grid-template-columns:1fr; } .build-features{ grid-template-columns:1fr; } }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     CHAPTER III — VERIFY
+     ═══════════════════════════════════════════════════════════════════ */
+  .verify-panel{ background:var(--void-card); border:1px solid var(--edge-dim); padding:36px 40px; box-shadow:0 40px 80px -35px rgba(0,0,0,0.8); }
+  .verify-panel-head{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px; flex-wrap:wrap; gap:16px; }
+  .verify-panel-head h3{ font-family:var(--font-display); font-size:18px; font-weight:600; letter-spacing:0.02em; }
+  .verify-panel-head .vp-sub{ font-family:var(--font-mono); font-size:11px; color:var(--parchment-faint); margin-top:6px; }
+  .verify-legend{ display:flex; gap:18px; font-family:var(--font-mono); font-size:10px; color:var(--parchment-dim); }
+  .verify-legend span{ display:flex; align-items:center; gap:7px; }
+  .verify-legend .sw{ width:8px; height:8px; }
+
+  .chart-row{ display:flex; align-items:flex-end; gap:22px; height:200px; margin-bottom:14px; }
+  .chart-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:10px; }
+  .chart-bar-wrap{ width:100%; max-width:50px; height:100%; display:flex; align-items:flex-end; }
+  .chart-bar{
+    width:100%; background:linear-gradient(180deg, var(--gold), var(--gold-dim));
+    height:0%; transition:height 1.2s cubic-bezier(.2,.8,.2,1); position:relative;
+  }
+  .chart-bar.muted{ background:linear-gradient(180deg, var(--edge-dim), var(--edge)); }
+  .chart-bar .bv{
+    position:absolute; top:-20px; left:50%; transform:translateX(-50%);
+    font-family:var(--font-mono); font-size:10px; color:var(--parchment); white-space:nowrap;
+  }
+  .chart-xlabel{ font-family:var(--font-mono); font-size:10px; color:var(--parchment-faint); text-align:center; }
+
+  .verify-stats-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--edge); border-top:1px solid var(--edge); margin-top:32px; }
+  .verify-stat{ background:var(--void-card); padding:22px 24px; }
+  .verify-stat .vs-num{ font-family:var(--font-display); font-size:26px; font-weight:700; color:var(--parchment); margin-bottom:6px; }
+  .verify-stat .vs-num .accent{ color:var(--gold); }
+  .verify-stat .vs-label{ font-family:var(--font-mono); font-size:10px; color:var(--parchment-faint); }
+
+  @media(max-width:700px){ .verify-panel{ padding:24px 20px; } .chart-row{ gap:10px; } .verify-stats-row{ grid-template-columns:1fr; } }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     INVENTORY (Stack)
+     ═══════════════════════════════════════════════════════════════════ */
+  .inventory-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--edge); border:1px solid var(--edge);
+  }
+  .inv-cell{
+    background:var(--void-card); padding:24px 22px; transition:background 0.3s, border-color 0.3s;
+    position:relative;
+  }
+  .inv-cell::before{
+    content:''; position:absolute; inset:0; border:1px solid transparent;
+    transition:border-color 0.3s; pointer-events:none;
+  }
+  .inv-cell:hover::before{ border-color:var(--gold-faint); }
+  .inv-cell:hover{ background:var(--void-light); }
+  .inv-cell .ic-icon{ width:24px; height:24px; color:var(--gold); margin-bottom:14px; }
+  .inv-cell h4{
+    font-family:var(--font-mono); font-size:10px; text-transform:uppercase;
+    letter-spacing:0.1em; color:var(--parchment); margin-bottom:10px;
+  }
+  .inv-cell .items{ font-size:12px; color:var(--parchment-dim); line-height:1.8; }
+  @media(max-width:980px){ .inventory-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:560px){ .inventory-grid{ grid-template-columns:1fr; } }
+
+  .other-projects{ margin-top:56px; }
+  .op-label{
+    font-family:var(--font-mono); font-size:11px; color:var(--parchment-faint);
+    text-transform:uppercase; letter-spacing:0.12em; margin-bottom:24px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .op-label::after{ content:''; flex:1; height:1px; background:var(--edge); }
+  .op-list{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .op-card{ border:1px solid var(--edge); padding:20px; transition:all 0.3s; position:relative; }
+  .op-card::before{
+    content:''; position:absolute; inset:0; border:1px solid transparent;
+    transition:border-color 0.3s; pointer-events:none;
+  }
+  .op-card:hover::before{ border-color:var(--gold-faint); }
+  .op-card:hover{ transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,0,0,0.4); }
+  .op-card h5{ font-family:var(--font-display); font-size:14px; font-weight:600; margin-bottom:6px; letter-spacing:0.02em; }
+  .op-card .op-meta{ font-family:var(--font-mono); font-size:10px; color:var(--gold-faint); margin-bottom:8px; letter-spacing:0.05em; }
+  .op-card p{ font-size:12.5px; color:var(--parchment-dim); line-height:1.6; margin-bottom:10px; }
+  .op-card a{ font-family:var(--font-mono); font-size:10px; color:var(--gold); display:inline-flex; align-items:center; gap:5px; }
+  .op-card a:hover{ text-decoration:underline; }
+  @media(max-width:860px){ .op-list{ grid-template-columns:1fr; } }
+
+  /* ── LORE (Education) ─────────────────────────────────────────────── */
+  .timeline{ position:relative; padding-left:36px; border-left:1px solid var(--gold-faint); }
+  .tl-item{ position:relative; padding-bottom:44px; }
+  .tl-item:last-child{ padding-bottom:0; }
+  .tl-item::before{
+    content:''; position:absolute; left:-42px; top:4px; width:12px; height:12px;
+    background:var(--void); border:2px solid var(--gold); border-radius:50%;
+    box-shadow:0 0 12px rgba(201,154,59,0.15);
+  }
+  .tl-date{ font-family:var(--font-mono); font-size:11px; color:var(--gold); margin-bottom:6px; letter-spacing:0.05em; }
+  .tl-title{ font-family:var(--font-display); font-size:17px; font-weight:600; margin-bottom:4px; letter-spacing:0.02em; }
+  .tl-org{ font-size:13px; color:var(--parchment-dim); margin-bottom:8px; }
+  .tl-desc{ font-size:12.5px; color:var(--parchment-faint); max-width:560px; line-height:1.6; }
+
+  /* ── COVENANT (Contact) ───────────────────────────────────────────── */
+  .covenant-shell{
+    border:1px solid var(--edge-dim); padding:72px 50px; text-align:center;
+    position:relative; overflow:hidden; background:var(--void-card);
+  }
+  .covenant-shell::before{
+    content:''; position:absolute; top:-40%; left:50%; transform:translateX(-50%);
+    width:600px; height:600px;
+    background:radial-gradient(circle, rgba(201,154,59,0.06), transparent 65%);
+    pointer-events:none;
+  }
+  .covenant-shell .covenant-rune{
+    font-size:28px; color:var(--gold-dim); margin-bottom:20px; opacity:0.5;
+  }
+  .covenant-shell h2{
+    font-family:var(--font-display); font-size:clamp(1.8rem,4.2vw,2.8rem); font-weight:700;
+    margin-bottom:18px; position:relative; line-height:1.1; letter-spacing:0.03em;
+  }
+  .covenant-shell h2 .gold{ color:var(--gold); }
+  .covenant-shell p{
+    color:var(--parchment-dim); max-width:480px; margin:0 auto 36px;
+    position:relative; font-size:14.5px; line-height:1.7;
+  }
+  .covenant-ctas{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; position:relative; margin-bottom:40px; }
+  .covenant-links{
+    display:flex; gap:28px; justify-content:center; flex-wrap:wrap;
+    font-family:var(--font-mono); font-size:12px; position:relative;
+  }
+  .covenant-links a{ color:var(--parchment-dim); transition:color 0.3s; display:flex; align-items:center; gap:7px; }
+  .covenant-links a:hover{ color:var(--gold); }
+
+  footer{
+    padding:32px 0; text-align:center; font-family:var(--font-mono); font-size:11px;
+    color:var(--parchment-faint); display:flex; justify-content:space-between;
+    align-items:center; flex-wrap:wrap; gap:10px; border-top:1px solid var(--edge);
+  }
+  footer .ok{ display:flex; align-items:center; gap:8px; }
+  footer .ok .d{
+    width:7px; height:7px; border-radius:50%; background:var(--gold);
+    box-shadow:0 0 6px var(--gold); animation:blink 2s steps(1) infinite;
+  }
+
+  .icon{ width:1em; height:1em; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; display:inline-block; }
+
+  @media(max-width:560px){
+    section.act{ padding:70px 0; }
+    .covenant-shell{ padding:40px 20px; }
+    .contact-links{ flex-direction:column; gap:16px; align-items:center; }
+    footer{ flex-direction:column; }
+  }
+
+  /* ── scrollbar ────────────────────────────────────────────────────── */
+  ::-webkit-scrollbar{ width:6px; }
+  ::-webkit-scrollbar-track{ background:var(--void); }
+  ::-webkit-scrollbar-thumb{ background:var(--edge-dim); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover{ background:var(--gold-faint); }
+</style>
+</head>
+<body>
+
+<canvas id="emberCanvas"></canvas>
+<div class="grain-overlay"></div>
+
+<div class="notification-overlay" id="notifOverlay">
+  <div>
+    <div class="notif-text" id="notifText">✦ SITE OF GRACE LIT ✦</div>
+    <div class="notif-sub" id="notifSub">The path unfolds before you</div>
+  </div>
+</div>
+
+<header class="nav" id="navEl">
+  <div class="wrap nav-inner">
+    <a href="#top" class="nav-logo"><span class="grace-dot"></span>M. ABDULLAH</a>
+    <nav class="nav-links">
+      <a href="#probe">01 · Probe</a>
+      <a href="#build">02 · Build</a>
+      <a href="#verify">03 · Verify</a>
+      <a href="#inventory">Inventory</a>
+      <a href="#lore">Lore</a>
+    </nav>
+    <a href="#covenant" class="nav-cta">Covenant →</a>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="hero-bg-runes"></div>
+  <div class="wrap hero-grid" id="heroGrid">
+    <div>
+      <div class="kicker">Sharjah, UAE · The Tarnished Awakens</div>
+      <h1>
+        I break things<br>
+        to learn how<br>
+        to <span class="gold">build</span> them<br>
+        <span class="em">right.</span>
+      </h1>
+      <p class="hero-sub">
+        Final-year Computer Science student at the University of West London.
+        I run <strong>penetration tests</strong> on the same systems I <strong>architect</strong>,
+        then <strong>measure</strong> whether either one actually held up.
+      </p>
+      <div class="hero-ctas">
+        <a href="#build" class="btn-solid">Begin the journey →</a>
+        <a href="assets/Muhammad_Abdullah_CV.pdf" download class="btn-line">Download Lore Scroll ↓</a>
+      </div>
+      <div class="hero-meta-row">
+        <div><div class="m-num">8</div><div class="m-lbl">Shipped Builds</div></div>
+        <div><div class="m-num">1</div><div class="m-lbl">Live SaaS Product</div></div>
+        <div><div class="m-num">1,250+</div><div class="m-lbl">Records Analysed</div></div>
+      </div>
+    </div>
+
+    <div class="rig-stage" id="rigStage">
+      <div class="rig" id="rig">
+        <div class="rig-glow"></div>
+        <div class="rig-floor"></div>
+        <span class="rig-rune r1">⟡</span>
+        <span class="rig-rune r2">⟡</span>
+        <span class="rig-rune r3">⟡</span>
+        <div class="rig-panel probe">
+          <div>
+            <svg class="p-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <div>
+            <div class="p-label">01 — Probe</div>
+            <div class="p-title">Find the Break</div>
+            <div class="p-desc">OWASP MASVS · ADB exploitation · Kali Linux</div>
+          </div>
+        </div>
+        <div class="rig-panel build">
+          <div>
+            <svg class="p-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
+          </div>
+          <div>
+            <div class="p-label">02 — Build</div>
+            <div class="p-title">Ship the Fix</div>
+            <div class="p-desc">React · Flask · PostgreSQL · Stripe</div>
+          </div>
+        </div>
+        <div class="rig-panel verify">
+          <div>
+            <svg class="p-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 19V10M10 19V4M16 19v-7M22 19H2"/></svg>
+          </div>
+          <div>
+            <div class="p-label">03 — Verify</div>
+            <div class="p-title">Prove It Held</div>
+            <div class="p-desc">Python · R/SQL · MongoDB Atlas</div>
+          </div>
+        </div>
+        <img class="rig-portrait" src="assets/hero-portrait-soft.png" alt="Muhammad Abdullah">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER I INTRO -->
+<div class="chapter-intro" id="ch1Intro">
+  <div class="ci-number">CHAPTER I</div>
+  <div class="ci-line"></div>
+  <h2>The Probe</h2>
+  <div class="ci-desc">"To break a thing is to know it. To know it is to own it."</div>
+</div>
+
+<!-- GRACE CHECKPOINT -->
+<div class="grace-checkpoint reveal" id="grace1">
+  <div class="grace-circle"><div class="g-inner"></div></div>
+  <div class="grace-label">Site of Grace</div>
+</div>
+
+<section class="act" id="probe">
+  <div class="wrap">
+    <div class="act-head reveal">
+      <div class="act-head-left">
+        <div class="act-tag">01 — The Probe</div>
+        <h2>I reproduce the vulnerability before I trust the fix.</h2>
+        <p>Android Mobile Security Assessment — a controlled OWASP M9 exploit, documented end to end.</p>
+      </div>
+      <div class="act-stat">
+        <div class="n">8-step</div>
+        <div class="l">Hardening guide shipped</div>
+      </div>
+    </div>
+
+    <div class="stat-bars-row reveal">
+      <div class="stat-bar-wrap">
+        <div class="stat-bar-label"><span>Resolve</span><span id="resolveVal">0/100</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill resolve" id="resolveBar"></div></div>
+      </div>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar-label"><span>Focus</span><span id="focusVal">0/100</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill focus" id="focusBar"></div></div>
+      </div>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar-label"><span>Logic</span><span id="logicVal">0/100</span></div>
+        <div class="stat-bar-track"><div class="stat-bar-fill logic" id="logicBar"></div></div>
+      </div>
+    </div>
+
+    <div class="probe-grid reveal">
+      <div class="term-shell">
+        <div class="term-bar">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <div class="title">kali@security-lab: ~/android-pentest</div>
+        </div>
+        <div class="term-body" id="termBody"></div>
+      </div>
+      <div class="probe-side">
+        <div class="probe-fact">
+          <div class="f-label">Vulnerability class</div>
+          <div class="f-val">OWASP M9 — Insecure Data Storage</div>
+          <div class="f-desc">Credentials persisted in plain-text SharedPreferences, readable without root access.</div>
+        </div>
+        <div class="probe-fact">
+          <div class="f-label">Remediation</div>
+          <div class="f-val">EncryptedSharedPreferences + Keystore</div>
+          <div class="f-desc">AES-256-GCM encryption backed by the Android Keystore. Re-tested under the identical attack — ciphertext held.</div>
+        </div>
+        <div class="probe-fact">
+          <div class="f-label">Stack</div>
+          <div class="f-val">Kotlin · Kali Linux · ADB</div>
+          <div class="f-desc">Android x86 emulator, Jetpack Security, OWASP MASVS-aligned documentation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER II INTRO -->
+<div class="chapter-intro" id="ch2Intro">
+  <div class="ci-number">CHAPTER II</div>
+  <div class="ci-line"></div>
+  <h2>The Builder</h2>
+  <div class="ci-desc">"From ashes of failure, great architectures rise."</div>
+</div>
+
+<!-- GRACE CHECKPOINT -->
+<div class="grace-checkpoint reveal" id="grace2">
+  <div class="grace-circle"><div class="g-inner"></div></div>
+  <div class="grace-label">Site of Grace</div>
+</div>
+
+<section class="act" id="build">
+  <div class="wrap">
+    <div class="act-head reveal">
+      <div class="act-head-left">
+        <div class="act-tag">02 — The Builder</div>
+        <h2>CareerCompass — shipped, billed, and live.</h2>
+        <p>Not a prototype. A production SaaS platform with real auth, real payments, and real users.</p>
+      </div>
+      <div class="act-stat">
+        <div class="n">0–100</div>
+        <div class="l">Explainable match score</div>
+      </div>
+    </div>
+
+    <div class="build-showcase reveal">
+      <div class="mock-browser-bar">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <div class="url">careercompass-iota.vercel.app</div>
+      </div>
+      <div class="mock-app">
+        <div class="mock-copy">
+          <div class="m-tag">Recommendation Engine</div>
+          <h3>Big Five scoring meets resume NLP.</h3>
+          <p>Personality assessment, skills extraction, and interest mapping combine into a single
+            ranked score — with a plain-language reason attached to every match.</p>
+          <div class="mock-score-row">
+            <span class="mock-chip">spaCy</span>
+            <span class="mock-chip">BART-MNLI</span>
+            <span class="mock-chip">Row-Level Security</span>
+          </div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-card-row">
+            <span class="label">CAREER MATCH</span>
+            <span class="mock-match-score" id="matchScore">0</span>
+          </div>
+          <div class="mock-bar-track"><div class="mock-bar-fill" id="matchBar"></div></div>
+          <div class="mock-role-list">
+            <div class="mock-role"><span>Backend Engineer</span><span class="pct">91%</span></div>
+            <div class="mock-role"><span>Security Analyst</span><span class="pct">84%</span></div>
+            <div class="mock-role"><span>Data Engineer</span><span class="pct">77%</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="build-features">
+        <div class="build-feature">
+          <div class="bf-num">→ Billing</div>
+          <h4>Stripe subscriptions</h4>
+          <p>Free / Pro / Enterprise tiers, signed webhooks, automated upgrade and cancellation flows.</p>
+        </div>
+        <div class="build-feature">
+          <div class="bf-num">→ Data</div>
+          <h4>PostgreSQL + RLS</h4>
+          <p>Multi-tenant isolation enforced at the database layer, not just the application layer.</p>
+        </div>
+        <div class="build-feature">
+          <div class="bf-num">→ Deploy</div>
+          <h4>Vercel + Render</h4>
+          <p>Continuous deployment, validated with unit, integration, and end-to-end tests in production.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHAPTER III INTRO -->
+<div class="chapter-intro" id="ch3Intro">
+  <div class="ci-number">CHAPTER III</div>
+  <div class="ci-line"></div>
+  <h2>The Verifier</h2>
+  <div class="ci-desc">"In data we trust — but only after we've tested it to breaking."</div>
+</div>
+
+<!-- GRACE CHECKPOINT -->
+<div class="grace-checkpoint reveal" id="grace3">
+  <div class="grace-circle"><div class="g-inner"></div></div>
+  <div class="grace-label">Site of Grace</div>
+</div>
+
+<section class="act" id="verify">
+  <div class="wrap">
+    <div class="act-head reveal">
+      <div class="act-head-left">
+        <div class="act-tag">03 — The Verifier</div>
+        <h2>Nine datasets, three storage paradigms, one operational truth.</h2>
+        <p>NorthStar Urban Mobility & Logistics — finding the hub that's failing before the business does.</p>
+      </div>
+      <div class="act-stat">
+        <div class="n">1,250</div>
+        <div class="l">Orders analysed</div>
+      </div>
+    </div>
+
+    <div class="verify-panel reveal">
+      <div class="verify-panel-head">
+        <div>
+          <h3>Average delivery delay by hub (hours)</h3>
+          <div class="vp-sub">Source: R + SQL analysis across 950 deliveries</div>
+        </div>
+        <div class="verify-legend">
+          <span><span class="sw" style="background:var(--gold)"></span>Worst performer</span>
+          <span><span class="sw" style="background:var(--edge-dim)"></span>Other hubs</span>
+        </div>
+      </div>
+
+      <div class="chart-row" id="chartRow">
+        <div class="chart-col">
+          <div class="chart-bar-wrap"><div class="chart-bar muted" data-h="62" id="b1"><span class="bv">1.40</span></div></div>
+          <div class="chart-xlabel">H01</div>
+        </div>
+        <div class="chart-col">
+          <div class="chart-bar-wrap"><div class="chart-bar muted" data-h="70" id="b2"><span class="bv">1.65</span></div></div>
+          <div class="chart-xlabel">H02</div>
+        </div>
+        <div class="chart-col">
+          <div class="chart-bar-wrap"><div class="chart-bar muted" data-h="55" id="b3"><span class="bv">1.20</span></div></div>
+          <div class="chart-xlabel">H03</div>
+        </div>
+        <div class="chart-col">
+          <div class="chart-bar-wrap"><div class="chart-bar muted" data-h="74" id="b4"><span class="bv">1.80</span></div></div>
+          <div class="chart-xlabel">H04</div>
+        </div>
+        <div class="chart-col">
+          <div class="chart-bar-wrap"><div class="chart-bar" data-h="100" id="b5"><span class="bv">3.30</span></div></div>
+          <div class="chart-xlabel">H05</div>
+        </div>
+        <div class="chart-col">
+          <div class="chart-bar-wrap"><div class="chart-bar muted" data-h="58" id="b6"><span class="bv">1.30</span></div></div>
+          <div class="chart-xlabel">H06</div>
+        </div>
+      </div>
+
+      <div class="verify-stats-row">
+        <div class="verify-stat">
+          <div class="vs-num"><span class="accent">H05</span></div>
+          <div class="vs-label">Worst-performing hub — 3.66/5 rating</div>
+        </div>
+        <div class="verify-stat">
+          <div class="vs-num">35.29<span class="accent">%</span></div>
+          <div class="vs-label">Central zone — highest delay rate</div>
+        </div>
+        <div class="verify-stat">
+          <div class="vs-num">32.12<span class="accent">%</span></div>
+          <div class="vs-label">Business orders — highest problem rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INVENTORY (Stack) -->
+<div class="chapter-intro" id="invIntro">
+  <div class="ci-number">INVENTORY</div>
+  <div class="ci-line"></div>
+  <h2>Armaments & Arts</h2>
+  <div class="ci-desc">"A tarnished is only as strong as their arsenal."</div>
+</div>
+
+<div class="grace-checkpoint reveal">
+  <div class="grace-circle"><div class="g-inner"></div></div>
+  <div class="grace-label">Site of Grace</div>
+</div>
+
+<section class="act" id="inventory">
+  <div class="wrap">
+    <div class="act-head reveal">
+      <div class="act-head-left">
+        <div class="act-tag">Inventory</div>
+        <h2>What's actually under the hood.</h2>
+        <p>No padding — every item here shipped in Probe, Build, or Verify above.</p>
+      </div>
+    </div>
+
+    <div class="inventory-grid reveal">
+      <div class="inv-cell">
+        <svg class="ic-icon icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <h4>Languages</h4>
+        <div class="items">Python · TypeScript · JavaScript · Java · Kotlin · SQL · R</div>
+      </div>
+      <div class="inv-cell">
+        <svg class="ic-icon icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <h4>Frontend</h4>
+        <div class="items">React · TypeScript · Figma · WCAG accessibility</div>
+      </div>
+      <div class="inv-cell">
+        <svg class="ic-icon icon" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg>
+        <h4>Backend</h4>
+        <div class="items">Flask · Node.js · REST APIs · Stripe · RBAC</div>
+      </div>
+      <div class="inv-cell">
+        <svg class="ic-icon icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg>
+        <h4>Databases</h4>
+        <div class="items">PostgreSQL (RLS) · Supabase · MongoDB Atlas</div>
+      </div>
+      <div class="inv-cell">
+        <svg class="ic-icon icon" viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4z"/></svg>
+        <h4>Security</h4>
+        <div class="items">OWASP MASVS · Kali Linux · ADB · AES-256-GCM</div>
+      </div>
+      <div class="inv-cell">
+        <svg class="ic-icon icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        <h4>Data &amp; ML</h4>
+        <div class="items">pandas · spaCy · BART-MNLI · seaborn</div>
+      </div>
+      <div class="inv-cell">
+        <svg class="ic-icon icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+        <h4>Software Eng.</h4>
+        <div class="items">OOP · SOLID · UML · OCL · JUnit 4</div>
+      </div>
+      <div class="inv-cell">
+        <svg class="ic-icon icon" viewBox="0 0 24 24"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        <h4>DevOps</h4>
+        <div class="items">Git · Docker · Vercel · Render</div>
+      </div>
+    </div>
+
+    <div class="other-projects reveal">
+      <div class="op-label">Also Forged</div>
+      <div class="op-list">
+        <div class="op-card">
+          <h5>Extended Playfair Cipher</h5>
+          <div class="op-meta">CRYPTOGRAPHY · 2025–2026</div>
+          <p>9×9 matrix supporting full alphanumeric + symbols. 100% lossless, benchmarked against bcrypt and Argon2id.</p>
+        </div>
+        <div class="op-card">
+          <h5>Enterprise KMS</h5>
+          <div class="op-meta">SOFTWARE ENGINEERING · 2025–2026</div>
+          <p>Full UML design + Java implementation for a system serving 68 global offices. 14-step JUnit 4 suite.</p>
+        </div>
+        <div class="op-card">
+          <h5>Rivo Vogue eCommerce</h5>
+          <div class="op-meta">FREELANCE · 2023–2024</div>
+          <p>Live men's fashion storefront built on Odoo CMS.</p>
+          <a href="https://rivo-vogue1.odoo.com" target="_blank" rel="noopener">View live site →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LORE (Education) -->
+<div class="chapter-intro" id="loreIntro">
+  <div class="ci-number">LORE</div>
+  <div class="ci-line"></div>
+  <h2>The Path Here</h2>
+  <div class="ci-desc">"Every journey begins in ash and ends in glory."</div>
+</div>
+
+<div class="grace-checkpoint reveal">
+  <div class="grace-circle"><div class="g-inner"></div></div>
+  <div class="grace-label">Site of Grace</div>
+</div>
+
+<section class="act" id="lore">
+  <div class="wrap">
+    <div class="act-head reveal">
+      <div class="act-head-left">
+        <div class="act-tag">Lore</div>
+        <h2>The path here.</h2>
+      </div>
+    </div>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-date">2023 — 2026 (Final Year)</div>
+        <div class="tl-title">BSc (Hons) Computer Science</div>
+        <div class="tl-org">University of West London</div>
+        <div class="tl-desc">Modules: Software Engineering, Cybersecurity, Databases &amp; Analytics, OOP, HCI, Networking. Dissertation: CareerCompass.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2020 — 2022</div>
+        <div class="tl-title">FSc Pre-Engineering</div>
+        <div class="tl-org">Punjab Group of Colleges, Lahore</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2009 — 2020</div>
+        <div class="tl-title">Matriculation (IGCSE-equivalent)</div>
+        <div class="tl-org">Al Amaal English High School, Sharjah</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COVENANT (Contact) -->
+<div class="chapter-intro" id="covIntro">
+  <div class="ci-number">COVENANT</div>
+  <div class="ci-line"></div>
+  <h2>Forge a Pact</h2>
+  <div class="ci-desc">"No champion conquers alone."</div>
+</div>
+
+<div class="grace-checkpoint reveal">
+  <div class="grace-circle"><div class="g-inner"></div></div>
+  <div class="grace-label">Site of Grace</div>
+</div>
+
+<section class="act" id="covenant" style="border-bottom:none;">
+  <div class="wrap">
+    <div class="covenant-shell reveal">
+      <div class="covenant-rune">⟡</div>
+      <h2>Let's build something<br>that <span class="gold">ships.</span></h2>
+      <p>Open to graduate and junior roles in Software Engineering, Full-Stack Development,
+        Data Engineering, or Cybersecurity across the UAE.</p>
+      <div class="covenant-ctas">
+        <a href="mailto:mabdulatalhakh213@gmail.com" class="btn-solid">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m4 6 8 7 8-7"/></svg>
+          mabdulatalhakh213@gmail.com
+        </a>
+        <a href="assets/Muhammad_Abdullah_CV.pdf" download class="btn-line">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download Lore Scroll
+        </a>
+      </div>
+      <div class="covenant-links">
+        <a href="tel:+971506703682"><svg class="icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.36 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+971 50 670 3682</a>
+        <a href="https://www.linkedin.com/in/muhammad-abdullah-411750415" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</a>
+        <a href="https://github.com/mabdulatalhakh213-ux" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>GitHub</a>
+        <a href="https://careercompass-iota.vercel.app" target="_blank" rel="noopener"><svg class="icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3"/></svg>CareerCompass</a>
+        <a href="#top"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Sharjah, UAE</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+    <span>© 2026 Muhammad Abdullah — The Tarnished that Probes, Builds & Verifies.</span>
+    <span class="ok"><span class="d"></span>Grace sustained</span>
+  </div>
+</footer>
+
+<script>
+  // ── EMBER PARTICLE SYSTEM ────────────────────────────────────────────
+  const canvas = document.getElementById('emberCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  function resize(){ W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+
+  const embers = [];
+  const EMBER_COUNT = 80;
+  for(let i = 0; i < EMBER_COUNT; i++){
+    embers.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      size: 1.5 + Math.random() * 3,
+      speedY: -(0.3 + Math.random() * 0.8),
+      speedX: (Math.random() - 0.5) * 0.3,
+      opacity: 0.2 + Math.random() * 0.6,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+
+  function drawEmbers(){
+    ctx.clearRect(0, 0, W, H);
+    embers.forEach(e => {
+      e.x += e.speedX;
+      e.y += e.speedY;
+      if(e.y < -10){ e.y = H + 10; e.x = Math.random() * W; }
+      if(e.x < -10) e.x = W + 10;
+      if(e.x > W + 10) e.x = -10;
+      const flicker = 0.6 + 0.4 * Math.sin(Date.now() / 800 + e.phase);
+      ctx.beginPath();
+      ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2);
+      const grad = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.size * 2);
+      grad.addColorStop(0, `rgba(232,146,58,${e.opacity * flicker})`);
+      grad.addColorStop(0.5, `rgba(201,154,59,${e.opacity * flicker * 0.4})`);
+      grad.addColorStop(1, 'rgba(201,154,59,0)');
+      ctx.fillStyle = grad;
+      ctx.fill();
+    });
+    requestAnimationFrame(drawEmbers);
+  }
+  drawEmbers();
+
+  // ── HERO REVEAL ─────────────────────────────────────────────────────
+  setTimeout(() => {
+    document.getElementById('heroGrid').classList.add('revealed');
+  }, 400);
+
+  // ── 3D RIG MOUSE PARALLAX ───────────────────────────────────────────
+  const rigStage = document.getElementById('rigStage');
+  const rig = document.getElementById('rig');
+  if(window.innerWidth > 640){
+    rigStage.addEventListener('mousemove', (e) => {
+      const r = rigStage.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      rig.style.transform = `rotateX(${6 - py*12}deg) rotateY(${-18 + px*20}deg)`;
+    });
+    rigStage.addEventListener('mouseleave', () => {
+      rig.style.transform = 'rotateX(6deg) rotateY(-18deg)';
+    });
+  }
+
+  // ── NAV SCROLL ──────────────────────────────────────────────────────
+  const navEl = document.getElementById('navEl');
+  window.addEventListener('scroll', () => {
+    navEl.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  // ── GENERIC SCROLL REVEAL ───────────────────────────────────────────
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  // ── CHAPTER INTROS (fade in on scroll) ──────────────────────────────
+  const chapterIntros = document.querySelectorAll('.chapter-intro');
+  const chIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.querySelectorAll('.ci-number, .ci-line, h2, .ci-desc').forEach((el, i) => {
+          setTimeout(() => el.classList.add('in'), i * 250);
+        });
+        chIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.25 });
+  chapterIntros.forEach(el => chIO.observe(el));
+
+  // ── GRACE CHECKPOINTS ──────────────────────────────────────────────
+  const graceEls = document.querySelectorAll('.grace-checkpoint');
+  const graceIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        showNotification('✦ Site of Grace Lit ✦', 'The path unfolds before you');
+        graceIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  graceEls.forEach(el => graceIO.observe(el));
+
+  // ── NOTIFICATION SYSTEM ─────────────────────────────────────────────
+  let notifTimeout = null;
+  function showNotification(text, sub){
+    const overlay = document.getElementById('notifOverlay');
+    const textEl = document.getElementById('notifText');
+    const subEl = document.getElementById('notifSub');
+    textEl.textContent = text;
+    subEl.textContent = sub || '';
+    overlay.classList.add('show');
+    if(notifTimeout) clearTimeout(notifTimeout);
+    notifTimeout = setTimeout(() => {
+      overlay.classList.remove('show');
+    }, 1800);
+  }
+
+  // ── STAT BARS ANIMATION ────────────────────────────────────────────
+  let statsAnimated = false;
+  function animateStats(){
+    if(statsAnimated) return; statsAnimated = true;
+    const bars = [
+      { el: document.getElementById('resolveBar'), valEl: document.getElementById('resolveVal'), target: 82 },
+      { el: document.getElementById('focusBar'), valEl: document.getElementById('focusVal'), target: 91 },
+      { el: document.getElementById('logicBar'), valEl: document.getElementById('logicVal'), target: 78 },
+    ];
+    bars.forEach((b, i) => {
+      setTimeout(() => {
+        b.el.style.width = b.target + '%';
+        let cur = 0;
+        const step = () => {
+          cur += 2;
+          if(cur >= b.target){ cur = b.target; b.valEl.textContent = cur + '/100'; return; }
+          b.valEl.textContent = cur + '/100';
+          requestAnimationFrame(() => setTimeout(step, 16));
+        };
+        step();
+      }, i * 200);
+    });
+  }
+  const probeSectionStats = document.getElementById('probe');
+  const statsObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ animateStats(); statsObs.unobserve(probeSectionStats); } });
+  }, { threshold: 0.2 });
+  statsObs.observe(probeSectionStats);
+
+  // ── TERMINAL ────────────────────────────────────────────────────────
+  const TERM_LINES = [
+    { cmd: 'adb shell', out: null },
+    { cmd: 'run-as com.target.app cat shared_prefs/auth.xml', out: '&lt;username&gt;admin&lt;/username&gt;', warn:true },
+    { cmd: '', out: '&lt;password&gt;plaintext_pw_123&lt;/password&gt;', warn:true },
+    { cmd: 'echo "VULN CONFIRMED: OWASP M9"', out: 'Insecure Data Storage — no root required', warn:true },
+    { cmd: '# remediate with EncryptedSharedPreferences', out: null },
+    { cmd: 'run-as com.target.app cat shared_prefs/auth.xml', out: '8f3a91e2...c4b1 (AES-256-GCM)', ok:true },
+    { cmd: 'echo "ATTACK RE-RUN: ciphertext unreadable"', out: 'PASS', ok:true },
+  ];
+  const termBody = document.getElementById('termBody');
+  let termBuilt = false;
+  function buildTerminal(){
+    if(termBuilt) return; termBuilt = true;
+    let html = '';
+    let ln = 1;
+    TERM_LINES.forEach((l) => {
+      if(l.cmd){
+        html += `<div class="term-line" data-i="${ln-1}"><span class="ln">${ln}</span><span class="cmd">$ ${l.cmd}</span></div>`;
+        ln++;
+      }
+      if(l.out){
+        html += `<div class="term-line" data-i="${ln-1}"><span class="ln">${ln}</span><span class="out ${l.warn?'warn':''} ${l.ok?'ok':''}">${l.out}</span></div>`;
+        ln++;
+      }
+    });
+    html += `<div class="term-line" data-i="${ln-1}"><span class="ln">${ln}</span><span class="cmd">$ <span class="term-cursor"></span></span></div>`;
+    termBody.innerHTML = html;
+    const lines = termBody.querySelectorAll('.term-line');
+    lines.forEach((el,i) => setTimeout(()=> el.classList.add('in'), 120*i));
+  }
+  const termObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ buildTerminal(); termObs.unobserve(e.target); } });
+  }, { threshold: 0.2 });
+  termObs.observe(document.getElementById('probe'));
+
+  // ── BUILD ANIMATION ─────────────────────────────────────────────────
+  let scoreBuilt = false;
+  function animateScore(){
+    if(scoreBuilt) return; scoreBuilt = true;
+    const scoreEl = document.getElementById('matchScore');
+    const barEl = document.getElementById('matchBar');
+    barEl.style.width = '91%';
+    let cur = 0;
+    const target = 91;
+    const step = () => {
+      cur += 3;
+      if(cur >= target){ cur = target; scoreEl.textContent = cur; return; }
+      scoreEl.textContent = cur;
+      requestAnimationFrame(() => setTimeout(step, 16));
+    };
+    step();
+  }
+  const buildObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ animateScore(); buildObs.unobserve(e.target); } });
+  }, { threshold: 0.25 });
+  buildObs.observe(document.getElementById('build'));
+
+  // ── CHART ANIMATION ─────────────────────────────────────────────────
+  let chartBuilt = false;
+  function animateChart(){
+    if(chartBuilt) return; chartBuilt = true;
+    ['b1','b2','b3','b4','b5','b6'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      const h = el.dataset.h;
+      setTimeout(() => { el.style.height = h + '%'; }, i * 90);
+    });
+  }
+  const verifyObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ animateChart(); verifyObs.unobserve(e.target); } });
+  }, { threshold: 0.25 });
+  verifyObs.observe(document.getElementById('verify'));
+</script>
+</body></html>
