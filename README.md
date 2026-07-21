@@ -6,14 +6,17 @@ This portfolio now includes a reusable motion system and high-impact interaction
 
 ### Added motion capabilities
 
-- Object reveal on hover/focus (`.reveal-object`, 3D cards)
-- Portal animation and space-transition glow (`#astral.portal-active`)
-- 3D product animation + scroll-reactive product cube (`#productScene`)
-- Parallax transformation (enhanced hero rig mouse + scroll parallax)
-- 3D gallery with depth cues (`#miniGallery`)
-- Breaking-the-fourth-wall effect (spring-following sentinel eye)
+- Object reveal on hover/focus (`.reveal-object`, `.fourth-wall-card`)
+- Portal animation (`.portal-card .portal-ring`, `@keyframes portalOrbit`)
+- 3D product animation (`#productScene`, `.product-face`)
+- Parallax transformation (hero rig mouse + scroll parallax on `#rig`)
+- Space transition (`#astral.portal-active` radial warp overlay)
+- 3D gallery with depth cues (`#miniGallery`, `.g-item`)
+- Breaking-the-fourth-wall effect (`#fourthWallEye` + reveal in `.fourth-wall-card`)
 - Smooth loader intro (`#smoothLoader`) with short non-blocking progress
-- Lightweight physics-like motion (spring/inertia cursor eye follow)
+- 3D product scroll response (scroll-rotating cube in `#productScene`)
+- Physics-like motion (spring/inertia follower logic for `#fourthWallEye`)
+- 3D illustration rig (`#rigStage` / `#rig` hero scene)
 - Horizontal scroll storytelling section (`#hScroll`) with scroll-snap and wheel-to-horizontal behavior
 - Reduced-motion and low-power fallbacks (motion gating + lower particle load)
 
