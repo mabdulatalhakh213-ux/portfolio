@@ -774,14 +774,307 @@
   ::-webkit-scrollbar-track{ background:var(--void); }
   ::-webkit-scrollbar-thumb{ background:var(--edge-dim); border-radius:3px; }
   ::-webkit-scrollbar-thumb:hover{ background:var(--gold-faint); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     ENHANCED ANIMATIONS — Alche / Tratti Distintivi inspired
+     ═══════════════════════════════════════════════════════════════════ */
+
+  /* ── SCROLL PROGRESS INDICATOR ─────────────────────────────────────── */
+  .scroll-progress{
+    position:fixed; top:0; left:0; height:2px; z-index:200;
+    background:linear-gradient(90deg, var(--gold), var(--cyber), var(--gold));
+    width:0%; transition:width 0.1s linear;
+    box-shadow:0 0 12px rgba(201,154,59,0.5);
+  }
+
+  /* ── SPACE TRANSITION OVERLAY ──────────────────────────────────────── */
+  .space-transition{
+    position:fixed; inset:0; z-index:95; pointer-events:none;
+    opacity:0; transition:opacity 0.8s ease;
+  }
+  .space-transition.active{ opacity:1; }
+  .space-transition .warp-line{
+    position:absolute; left:50%; width:2px; height:0;
+    background:linear-gradient(180deg, transparent, var(--gold), transparent);
+    transform:translateX(-50%);
+    transition:height 0.6s cubic-bezier(.2,.8,.2,1);
+  }
+  .space-transition.active .warp-line{ height:120vh; }
+
+  /* ── ENHANCED LOADER ───────────────────────────────────────────────── */
+  .smooth-loader .loader-particles{
+    position:absolute; inset:0; overflow:hidden;
+  }
+  .smooth-loader .loader-particle{
+    position:absolute; width:3px; height:3px; border-radius:50%;
+    background:var(--gold); opacity:0;
+    animation:loaderParticleFloat 2s ease-in-out infinite;
+  }
+  @keyframes loaderParticleFloat{
+    0%{ opacity:0; transform:translateY(40px) scale(0); }
+    50%{ opacity:0.8; }
+    100%{ opacity:0; transform:translateY(-60px) scale(1.5); }
+  }
+  .smooth-loader .loader-rune{
+    position:absolute; font-family:var(--font-display); font-size:60px;
+    color:var(--gold); opacity:0; animation:loaderRuneFloat 3s ease-in-out infinite;
+  }
+  @keyframes loaderRuneFloat{
+    0%,100%{ opacity:0.05; transform:translateY(0) rotate(0deg); }
+    50%{ opacity:0.15; transform:translateY(-20px) rotate(10deg); }
+  }
+
+  /* ── TEXT REVEAL CLIP-PATH (Alche-inspired) ────────────────────────── */
+  .text-reveal{
+    position:relative; display:inline-block;
+  }
+  .text-reveal .text-reveal-inner{
+    clip-path:inset(0 100% 0 0);
+    transition:clip-path 0.8s cubic-bezier(.2,.8,.2,1);
+  }
+  .text-reveal.in .text-reveal-inner{
+    clip-path:inset(0 0% 0 0);
+  }
+  .text-reveal .text-reveal-bg{
+    position:absolute; inset:0; background:var(--gold);
+    transform:scaleX(0); transform-origin:left;
+    transition:transform 0.6s cubic-bezier(.2,.8,.2,1) 0.2s;
+  }
+  .text-reveal.in .text-reveal-bg{
+    transform:scaleX(1);
+  }
+
+  /* ── PARALLAX SECTION BACKGROUNDS ──────────────────────────────────── */
+  .parallax-bg{
+    position:absolute; inset:-20%; pointer-events:none;
+    transition:transform 0.1s linear;
+    will-change:transform;
+  }
+  .parallax-bg .orb{
+    position:absolute; border-radius:50%; filter:blur(80px);
+    opacity:0.04;
+  }
+  .parallax-bg .orb-1{ width:400px; height:400px; background:var(--gold); top:10%; left:10%; }
+  .parallax-bg .orb-2{ width:300px; height:300px; background:var(--cyber); bottom:20%; right:15%; }
+  .parallax-bg .orb-3{ width:250px; height:250px; background:var(--blood-bright); top:50%; left:60%; }
+
+  /* ── MAGNETIC CURSOR EFFECT ────────────────────────────────────────── */
+  .magnetic-zone{
+    position:relative;
+  }
+  .magnetic-zone .magnetic-pull{
+    transition:transform 0.3s cubic-bezier(.2,.8,.2,1);
+  }
+
+  /* ── ENHANCED HORIZONTAL SCROLL ────────────────────────────────────── */
+  .h-scroll-track{
+    position:relative;
+  }
+  .h-scroll-track::before{
+    content:''; position:absolute; bottom:0; left:0; right:0;
+    height:1px; background:var(--edge-dim);
+  }
+  .h-scroll-track .h-progress{
+    position:absolute; bottom:0; left:0; height:2px;
+    background:linear-gradient(90deg, var(--gold-dim), var(--gold));
+    transition:width 0.15s linear;
+  }
+
+  /* ── 3D ILLUSTRATION CARDS ─────────────────────────────────────────── */
+  .illustration-stage{
+    perspective:1200px; position:relative;
+    min-height:300px; display:flex; align-items:center; justify-content:center;
+  }
+  .illust-card{
+    width:220px; height:280px; position:relative;
+    transform-style:preserve-3d;
+    transition:transform 0.6s cubic-bezier(.2,.8,.2,1);
+  }
+  .illust-card .illust-face{
+    position:absolute; inset:0; border:1px solid var(--edge-dim);
+    background:linear-gradient(160deg, rgba(17,19,24,0.95), rgba(13,15,19,0.9));
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:24px; text-align:center;
+    backface-visibility:hidden;
+  }
+  .illust-card .illust-face h4{
+    font-family:var(--font-display); font-size:16px; margin-top:12px;
+    letter-spacing:0.02em;
+  }
+  .illust-card .illust-face p{
+    font-size:12px; color:var(--parchment-dim); margin-top:8px; line-height:1.6;
+  }
+  .illust-card .illust-face .illust-icon{
+    width:48px; height:48px; color:var(--gold);
+  }
+
+  /* ── PHYSICS SPRING VISUAL FEEDBACK ────────────────────────────────── */
+  .spring-active{
+    animation:springBounce 0.4s cubic-bezier(.175,.885,.32,1.275);
+  }
+  @keyframes springBounce{
+    0%{ transform:scale(1); }
+    40%{ transform:scale(1.06); }
+    70%{ transform:scale(0.98); }
+    100%{ transform:scale(1); }
+  }
+
+  /* ── PARTICLE TRANSFORMATION ZONE ──────────────────────────────────── */
+  .particle-zone{
+    position:relative; overflow:hidden;
+  }
+  .particle-zone .p-particle{
+    position:absolute; width:4px; height:4px; border-radius:50%;
+    background:var(--gold); opacity:0;
+    transition:all 0.6s cubic-bezier(.2,.8,.2,1);
+  }
+  .particle-zone:hover .p-particle{
+    opacity:0.6;
+  }
+
+  /* ── SECTION DIVIDER GLOW ──────────────────────────────────────────── */
+  .section-glow{
+    position:relative;
+  }
+  .section-glow::after{
+    content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:200px; height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    opacity:0; transition:opacity 0.8s ease;
+  }
+  .section-glow.in::after{ opacity:1; }
+
+  /* ── ENHANCED CARD DEPTH ON HOVER ──────────────────────────────────── */
+  .depth-card{
+    transition:transform 0.5s cubic-bezier(.2,.8,.2,1), box-shadow 0.5s ease;
+    transform-style:preserve-3d;
+  }
+  .depth-card:hover{
+    transform:translateZ(20px) rotateX(-2deg);
+    box-shadow:0 30px 80px -25px rgba(0,0,0,0.9);
+  }
+
+  /* ── GLITCH TEXT EFFECT ────────────────────────────────────────────── */
+  .glitch-text{
+    position:relative;
+  }
+  .glitch-text::before, .glitch-text::after{
+    content:attr(data-text); position:absolute; inset:0;
+    opacity:0; transition:opacity 0.3s;
+  }
+  .glitch-text:hover::before{
+    opacity:0.8; color:var(--cyber);
+    animation:glitchShift 0.3s steps(2) infinite;
+  }
+  .glitch-text:hover::after{
+    opacity:0.8; color:var(--blood-bright);
+    animation:glitchShift 0.3s steps(2) reverse infinite;
+  }
+  @keyframes glitchShift{
+    0%{ transform:translate(2px,-1px); }
+    25%{ transform:translate(-2px,1px); }
+    50%{ transform:translate(1px,2px); }
+    75%{ transform:translate(-1px,-2px); }
+    100%{ transform:translate(2px,-1px); }
+  }
+
+  /* ── FLOATING RUNE PARTICLES (section-specific) ────────────────────── */
+  .floating-runes{
+    position:absolute; inset:0; pointer-events:none; overflow:hidden;
+  }
+  .floating-runes .rune{
+    position:absolute; font-family:var(--font-display); color:var(--gold);
+    opacity:0; animation:runeFloat 8s ease-in-out infinite;
+  }
+  @keyframes runeFloat{
+    0%{ opacity:0; transform:translateY(30px) rotate(0deg); }
+    20%{ opacity:0.08; }
+    80%{ opacity:0.08; }
+    100%{ opacity:0; transform:translateY(-30px) rotate(15deg); }
+  }
+
+  /* ── SMOOTH SECTION FADE TRANSITIONS ───────────────────────────────── */
+  .fade-section{
+    opacity:0; transform:translateY(40px);
+    transition:opacity 1s cubic-bezier(.2,.7,.25,1), transform 1s cubic-bezier(.2,.7,.25,1);
+  }
+  .fade-section.in{ opacity:1; transform:translateY(0); }
+
+  /* ── MARQUEE TEXT (horizontal auto-scroll) ──────────────────────────── */
+  .marquee-wrap{
+    overflow:hidden; white-space:nowrap; padding:20px 0;
+    border-top:1px solid var(--edge); border-bottom:1px solid var(--edge);
+  }
+  .marquee-track{
+    display:inline-flex; gap:60px;
+    animation:marqueeScroll 25s linear infinite;
+  }
+  .marquee-track span{
+    font-family:var(--font-display); font-size:clamp(2rem,4vw,3.5rem);
+    font-weight:700; color:var(--parchment); opacity:0.08;
+    letter-spacing:0.04em;
+  }
+  @keyframes marqueeScroll{
+    from{ transform:translateX(0); }
+    to{ transform:translateX(-50%); }
+  }
+
+  /* ── STAGGER REVEAL FOR GRID ITEMS ─────────────────────────────────── */
+  .stagger-reveal > *{
+    opacity:0; transform:translateY(20px);
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+  .stagger-reveal.in > *:nth-child(1){ transition-delay:0.05s; opacity:1; transform:translateY(0); }
+  .stagger-reveal.in > *:nth-child(2){ transition-delay:0.12s; opacity:1; transform:translateY(0); }
+  .stagger-reveal.in > *:nth-child(3){ transition-delay:0.19s; opacity:1; transform:translateY(0); }
+  .stagger-reveal.in > *:nth-child(4){ transition-delay:0.26s; opacity:1; transform:translateY(0); }
+  .stagger-reveal.in > *:nth-child(5){ transition-delay:0.33s; opacity:1; transform:translateY(0); }
+  .stagger-reveal.in > *:nth-child(6){ transition-delay:0.40s; opacity:1; transform:translateY(0); }
+  .stagger-reveal.in > *:nth-child(7){ transition-delay:0.47s; opacity:1; transform:translateY(0); }
+  .stagger-reveal.in > *:nth-child(8){ transition-delay:0.54s; opacity:1; transform:translateY(0); }
+
+  /* ── HOVER REVEAL EXPAND ───────────────────────────────────────────── */
+  .hover-expand{
+    overflow:hidden; position:relative;
+  }
+  .hover-expand .expand-content{
+    max-height:0; overflow:hidden;
+    transition:max-height 0.5s cubic-bezier(.2,.8,.2,1), opacity 0.4s ease;
+    opacity:0;
+  }
+  .hover-expand:hover .expand-content, .hover-expand:focus-within .expand-content{
+    max-height:200px; opacity:1;
+  }
+
+  /* ── MOUSE FOLLOW GLOW ─────────────────────────────────────────────── */
+  .mouse-glow{
+    position:fixed; width:300px; height:300px; border-radius:50%;
+    background:radial-gradient(circle, rgba(201,154,59,0.06), transparent 70%);
+    pointer-events:none; z-index:1;
+    transform:translate(-50%,-50%);
+    transition:left 0.3s ease, top 0.3s ease;
+  }
 </style>
 </head>
 <body>
 
 <canvas id="emberCanvas"></canvas>
 <div class="grain-overlay"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+<div class="mouse-glow" id="mouseGlow"></div>
+<div class="space-transition" id="spaceTransition"><div class="warp-line"></div></div>
 
 <div class="smooth-loader" id="smoothLoader" aria-hidden="true">
+  <div class="loader-particles">
+    <span class="loader-particle" style="left:20%;animation-delay:0s"></span>
+    <span class="loader-particle" style="left:35%;animation-delay:0.4s"></span>
+    <span class="loader-particle" style="left:50%;animation-delay:0.2s"></span>
+    <span class="loader-particle" style="left:65%;animation-delay:0.6s"></span>
+    <span class="loader-particle" style="left:80%;animation-delay:0.8s"></span>
+    <span class="loader-rune" style="left:15%;top:30%;animation-delay:0.5s">⟡</span>
+    <span class="loader-rune" style="right:15%;top:60%;animation-delay:1.2s">⟡</span>
+    <span class="loader-rune" style="left:40%;bottom:20%;animation-delay:0.8s">⟡</span>
+  </div>
   <div class="loader-core">
     <div class="loader-ring"></div>
     <div class="loader-label">Summoning motion systems</div>
@@ -821,10 +1114,10 @@
     <div>
       <div class="kicker">Sharjah, UAE · The Tarnished Awakens</div>
       <h1>
-        I break things<br>
-        to learn how<br>
-        to <span class="gold">build</span> them<br>
-        <span class="em">right.</span>
+        <span class="text-reveal"><span class="text-reveal-bg"></span><span class="text-reveal-inner">I break things</span></span><br>
+        <span class="text-reveal"><span class="text-reveal-bg"></span><span class="text-reveal-inner">to learn how</span></span><br>
+        <span class="text-reveal"><span class="text-reveal-bg"></span><span class="text-reveal-inner">to <span class="gold">build</span> them</span></span><br>
+        <span class="text-reveal"><span class="text-reveal-bg"></span><span class="text-reveal-inner"><span class="em">right.</span></span></span>
       </h1>
       <p class="hero-sub">
         Final-year Computer Science student at the University of West London.
@@ -885,6 +1178,14 @@
   </div>
 </section>
 
+<!-- MARQUEE -->
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <span>PROBE</span><span>·</span><span>BUILD</span><span>·</span><span>VERIFY</span><span>·</span><span>SECURITY</span><span>·</span><span>FULL-STACK</span><span>·</span><span>DATA</span><span>·</span><span>CAREERCOMPASS</span><span>·</span>
+    <span>PROBE</span><span>·</span><span>BUILD</span><span>·</span><span>VERIFY</span><span>·</span><span>SECURITY</span><span>·</span><span>FULL-STACK</span><span>·</span><span>DATA</span><span>·</span><span>CAREERCOMPASS</span><span>·</span>
+  </div>
+</div>
+
 <!-- CHAPTER I INTRO -->
 <div class="chapter-intro" id="ch1Intro">
   <div class="ci-number">CHAPTER I</div>
@@ -900,11 +1201,13 @@
 </div>
 
 <section class="act" id="probe">
+  <div class="parallax-bg" data-parallax="0.3"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
+  <div class="floating-runes"><span class="rune" style="left:10%;top:20%;animation-delay:0s">⟡</span><span class="rune" style="left:80%;top:60%;animation-delay:2s">⟡</span><span class="rune" style="left:50%;top:80%;animation-delay:4s">⟡</span></div>
   <div class="wrap">
     <div class="act-head reveal">
       <div class="act-head-left">
         <div class="act-tag">01 — The Probe</div>
-        <h2>I reproduce the vulnerability before I trust the fix.</h2>
+        <h2 class="glitch-text" data-text="I reproduce the vulnerability before I trust the fix.">I reproduce the vulnerability before I trust the fix.</h2>
         <p>Android Mobile Security Assessment — a controlled OWASP M9 exploit, documented end to end.</p>
       </div>
       <div class="act-stat">
@@ -972,11 +1275,12 @@
 </div>
 
 <section class="act" id="build">
+  <div class="parallax-bg" data-parallax="0.2"><div class="orb orb-1" style="background:var(--cyber)"></div><div class="orb orb-3"></div></div>
   <div class="wrap">
     <div class="act-head reveal">
       <div class="act-head-left">
         <div class="act-tag">02 — The Builder</div>
-        <h2>CareerCompass — shipped, billed, and live.</h2>
+        <h2 class="glitch-text" data-text="CareerCompass — shipped, billed, and live.">CareerCompass — shipped, billed, and live.</h2>
         <p>Not a prototype. A production SaaS platform with real auth, real payments, and real users.</p>
       </div>
       <div class="act-stat">
@@ -1197,7 +1501,7 @@
       </div>
     </div>
 
-    <div class="inventory-grid reveal">
+    <div class="inventory-grid reveal stagger-reveal">
       <div class="inv-cell">
         <svg class="ic-icon icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         <h4>Languages</h4>
@@ -1243,17 +1547,17 @@
     <div class="other-projects reveal">
       <div class="op-label">Also Forged</div>
       <div class="op-list">
-        <div class="op-card">
+        <div class="op-card depth-card">
           <h5>Extended Playfair Cipher</h5>
           <div class="op-meta">CRYPTOGRAPHY · 2025–2026</div>
           <p>9×9 matrix supporting full alphanumeric + symbols. 100% lossless, benchmarked against bcrypt and Argon2id.</p>
         </div>
-        <div class="op-card">
+        <div class="op-card depth-card">
           <h5>Enterprise KMS</h5>
           <div class="op-meta">SOFTWARE ENGINEERING · 2025–2026</div>
           <p>Full UML design + Java implementation for a system serving 68 global offices. 14-step JUnit 4 suite.</p>
         </div>
-        <div class="op-card">
+        <div class="op-card depth-card">
           <h5>Rivo Vogue eCommerce</h5>
           <div class="op-meta">FREELANCE · 2023–2024</div>
           <p>Live men's fashion storefront built on Odoo CMS.</p>
@@ -1777,5 +2081,211 @@
     }, { passive: true });
     requestAnimationFrame(springStep);
   }
+
+  // ── SCROLL PROGRESS INDICATOR ────────────────────────────────────────
+  const scrollProgress = document.getElementById('scrollProgress');
+  if(scrollProgress){
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      scrollProgress.style.width = progress + '%';
+    }, { passive: true });
+  }
+
+  // ── MOUSE FOLLOW GLOW ───────────────────────────────────────────────
+  const mouseGlow = document.getElementById('mouseGlow');
+  if(mouseGlow && heavyMotionEnabled){
+    document.addEventListener('mousemove', (e) => {
+      mouseGlow.style.left = e.clientX + 'px';
+      mouseGlow.style.top = e.clientY + 'px';
+    }, { passive: true });
+  }
+
+  // ── SPACE TRANSITION ON SECTION CHANGE ──────────────────────────────
+  const spaceTransition = document.getElementById('spaceTransition');
+  const sections = document.querySelectorAll('section.act');
+  if(spaceTransition && sections.length){
+    let lastSection = null;
+    const spaceObs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting && entry.target !== lastSection){
+          if(lastSection){
+            spaceTransition.classList.add('active');
+            setTimeout(() => spaceTransition.classList.remove('active'), 800);
+          }
+          lastSection = entry.target;
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(s => spaceObs.observe(s));
+  }
+
+  // ── PARALLAX BACKGROUNDS ────────────────────────────────────────────
+  const parallaxBgs = document.querySelectorAll('.parallax-bg');
+  if(parallaxBgs.length && !prefersReducedMotion){
+    const updateParallax = rafThrottle(() => {
+      const scrollY = window.scrollY;
+      parallaxBgs.forEach(bg => {
+        const speed = parseFloat(bg.dataset.parallax) || 0.2;
+        const rect = bg.parentElement.getBoundingClientRect();
+        const offset = (rect.top / window.innerHeight) * speed * 100;
+        bg.style.transform = `translateY(${offset}px)`;
+      });
+    });
+    window.addEventListener('scroll', updateParallax, { passive: true });
+  }
+
+  // ── TEXT REVEAL ANIMATION ───────────────────────────────────────────
+  const textReveals = document.querySelectorAll('.text-reveal');
+  if(textReveals.length){
+    setTimeout(() => {
+      textReveals.forEach((el, i) => {
+        setTimeout(() => el.classList.add('in'), i * 150);
+      });
+    }, 600);
+  }
+
+  // ── STAGGER REVEAL OBSERVER ─────────────────────────────────────────
+  const staggerEls = document.querySelectorAll('.stagger-reveal');
+  const staggerObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('in'); staggerObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.15 });
+  staggerEls.forEach(el => staggerObs.observe(el));
+
+  // ── SECTION GLOW OBSERVER ───────────────────────────────────────────
+  const glowEls = document.querySelectorAll('.section-glow');
+  const glowObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('in'); }
+      else { e.target.classList.remove('in'); }
+    });
+  }, { threshold: 0.5 });
+  glowEls.forEach(el => glowObs.observe(el));
+
+  // ── FADE SECTION OBSERVER ───────────────────────────────────────────
+  const fadeEls = document.querySelectorAll('.fade-section');
+  const fadeObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('in'); fadeObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  fadeEls.forEach(el => fadeObs.observe(el));
+
+  // ── SPRING BOUNCE ON INTERACTIVE ELEMENTS ───────────────────────────
+  document.querySelectorAll('.btn-solid, .btn-line, .nav-cta, .op-card, .inv-cell').forEach(el => {
+    el.addEventListener('click', function(){
+      this.classList.remove('spring-active');
+      void this.offsetWidth;
+      this.classList.add('spring-active');
+    });
+  });
+
+  // ── ENHANCED PRODUCT SCENE SCROLL ROTATION ──────────────────────────
+  const productCard = document.querySelector('.product-card');
+  if(productCard && !prefersReducedMotion){
+    productCard.addEventListener('wheel', (e) => {
+      if(productScene){
+        const rect = productScene.getBoundingClientRect();
+        if(rect.top < window.innerHeight && rect.bottom > 0){
+          const delta = e.deltaY * 0.15;
+          targetRotateY += delta;
+          e.preventDefault();
+        }
+      }
+    }, { passive: false });
+  }
+
+  // ── ENHANCED GALLERY PARALLAX ON SCROLL ─────────────────────────────
+  const galleryCard = document.querySelector('.gallery-card');
+  if(galleryCard && !prefersReducedMotion){
+    const galleryItems = galleryCard.querySelectorAll('.g-item');
+    const updateGalleryOnScroll = rafThrottle(() => {
+      const rect = galleryCard.getBoundingClientRect();
+      const progress = clamp(1 - (rect.top / window.innerHeight), 0, 1);
+      galleryItems.forEach((item, i) => {
+        const depth = (i + 1) * (8 + progress * 12);
+        item.style.transform = `translateZ(${depth}px) rotateY(${progress * (i - 1) * 3}deg)`;
+      });
+    });
+    window.addEventListener('scroll', updateGalleryOnScroll, { passive: true });
+  }
+
+  // ── FOURTH WALL ENHANCED: cursor trail particles ────────────────────
+  if(fourthWallEye && heavyMotionEnabled){
+    let trailParticles = [];
+    const maxTrail = 8;
+    for(let i = 0; i < maxTrail; i++){
+      const p = document.createElement('div');
+      p.style.cssText = `position:fixed;width:4px;height:4px;border-radius:50%;background:var(--gold);pointer-events:none;z-index:109;opacity:0;transition:opacity 0.3s;`;
+      document.body.appendChild(p);
+      trailParticles.push({ el: p, x: 0, y: 0 });
+    }
+    let trailIdx = 0;
+    document.addEventListener('pointermove', rafThrottle((e) => {
+      const p = trailParticles[trailIdx % maxTrail];
+      p.x = e.clientX; p.y = e.clientY;
+      p.el.style.left = p.x + 'px';
+      p.el.style.top = p.y + 'px';
+      p.el.style.opacity = '0.3';
+      setTimeout(() => { p.el.style.opacity = '0'; }, 300);
+      trailIdx++;
+    }), { passive: true });
+  }
+
+  // ── HORIZONTAL SCROLL ENHANCED: magnetic snap ───────────────────────
+  if(hScroll && !prefersReducedMotion){
+    let isDragging = false;
+    let startX, scrollLeft;
+    hScroll.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.pageX - hScroll.offsetLeft;
+      scrollLeft = hScroll.scrollLeft;
+      hScroll.style.cursor = 'grabbing';
+    });
+    hScroll.addEventListener('mouseleave', () => { isDragging = false; hScroll.style.cursor = ''; });
+    hScroll.addEventListener('mouseup', () => { isDragging = false; hScroll.style.cursor = ''; });
+    hScroll.addEventListener('mousemove', (e) => {
+      if(!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX - hScroll.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      hScroll.scrollLeft = scrollLeft - walk;
+    });
+  }
+
+  // ── INV CELL STAGGER HOVER GLOW ─────────────────────────────────────
+  document.querySelectorAll('.inv-cell').forEach(cell => {
+    cell.addEventListener('pointerenter', function(){
+      this.style.boxShadow = 'inset 0 0 30px rgba(201,154,59,0.05)';
+    });
+    cell.addEventListener('pointerleave', function(){
+      this.style.boxShadow = 'none';
+    });
+  });
+
+  // ── CHART BAR HOVER TOOLTIP ─────────────────────────────────────────
+  document.querySelectorAll('.chart-bar').forEach(bar => {
+    bar.addEventListener('pointerenter', function(){
+      this.style.filter = 'brightness(1.3)';
+      this.style.transition = 'filter 0.3s ease';
+    });
+    bar.addEventListener('pointerleave', function(){
+      this.style.filter = 'none';
+    });
+  });
+
+  // ── TIMELINE ITEM HOVER DEPTH ───────────────────────────────────────
+  document.querySelectorAll('.tl-item').forEach(item => {
+    item.addEventListener('pointerenter', function(){
+      this.style.transform = 'translateX(8px)';
+      this.style.transition = 'transform 0.3s cubic-bezier(.2,.8,.2,1)';
+    });
+    item.addEventListener('pointerleave', function(){
+      this.style.transform = 'translateX(0)';
+    });
+  });
 </script>
 </body></html>
